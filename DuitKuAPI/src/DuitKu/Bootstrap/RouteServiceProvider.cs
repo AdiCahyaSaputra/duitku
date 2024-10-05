@@ -13,6 +13,7 @@ namespace DuitKu.Bootstrap
 
         public static WebApplication Middleware(this WebApplication app)
         {
+            app.UseCors("_nuxtFeCorePolicy");
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseAuthentication();

@@ -64,5 +64,21 @@ namespace DuitKu.Bootstrap
 
             return services;
         }
+
+        public static IServiceCollection AddCorsConfig(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("_nuxtFeCorePolicy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            });
+
+            return services;
+        }
     }
 }

@@ -21,10 +21,9 @@ namespace DuitKu.Middleware
             {
                 await _next(context);
 
-                _logger.LogInformation($"API Hit status code {context.Response.StatusCode}");
+                _logger.LogInformation($"API Hit status code {context.Response.StatusCode} Method {context.Request.Method} Url {context.Request.Path}");
 
                 var statusCode = context.Response.StatusCode;
-
 
                 if (statusCode == StatusCodes.Status401Unauthorized)
                 {
