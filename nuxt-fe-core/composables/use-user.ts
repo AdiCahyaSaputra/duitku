@@ -1,64 +1,73 @@
 import { getAuthUser } from "@/services/auth-service";
 
+type TSetToken = {
+  message: string;
+  token: string;
+} | null;
+
 export const useUser = () => {
-  const queryClient = useQueryClient();
+  const jwtToken = useState<string | null>("token", () => null);
 
-  const jwtToken = useState<null | string>("token", () => null);
+  const {
+    data: user,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["get_user", jwtToken],
+    queryFn: async () => await getAuthUser(jwtToken.value),
+  });
 
-  const setAuthToken = async (token: string) => {
-    jwtToken.value = token;
-    localStorage.setItem("token", token);
-
-    await queryClient.invalidateQueries({
-      queryKey: ["get_user"],
+  const getToken = async () => {
+    // Kalo pake useFetch sering undefined pas di client nya
+    const data = await $fetch("/api/auth/cookie", {
+      method: "GET",
     });
 
-    navigateTo("/beranda");
+    return data;
   };
 
-  const revokeAuthToken = () => {
-    jwtToken.value = null;
+  const setAuthToken = async (token: string) => {
+    const { data } = await useFetch("/api/auth/cookie", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
 
-    localStorage.removeItem("token");
+    const createdToken = (data.value as TSetToken)?.token;
 
-    queryClient.setQueryData(["get_user"], null);
+    if (createdToken) {
+      jwtToken.value = createdToken;
+
+      refetch();
+
+      navigateTo("/beranda");
+    }
+  };
+
+  const revokeAuthToken = async () => {
+    const { data } = await useFetch("/api/auth/cookie", {
+      method: "DELETE",
+    });
 
     navigateTo("/login");
   };
 
-  const {
-    data: user,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey: ["get_user", jwtToken],
-    queryFn: () => getAuthUser(jwtToken.value!),
-    suspense: true,
-  });
-
   onMounted(async () => {
-    const token = localStorage.getItem("token");
+    const token = await getToken();
 
     if (token) {
       jwtToken.value = token;
+
+      refetch();
+    } else {
+      navigateTo("/login");
     }
   });
 
-  watch(
-    () => jwtToken.value,
-    async (newToken) => {
-      if (newToken) {
-        queryClient.invalidateQueries({
-          queryKey: ["get_user"],
-        });
-      }
-    },
-  );
-
   return {
     user,
+    refetch,
     isLoading,
-    error,
+    getToken,
     setAuthToken,
     revokeAuthToken,
   };

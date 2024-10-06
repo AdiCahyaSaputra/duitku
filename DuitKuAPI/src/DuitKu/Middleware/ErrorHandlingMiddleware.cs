@@ -37,7 +37,12 @@ namespace DuitKu.Middleware
                         Instance = context.Request.Path,
                     };
 
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(new
+                    {
+                        title = response.Title,
+                        status = response.Status,
+                        instance = response.Instance,
+                    }));
                 }
             }
             catch (Exception ex)

@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     typeCheck: true
   },
   routeRules: {
-    "/api/**": {
+    "/duit-ku/api/**": {
       cors: true,
       proxy: "http://localhost:5143/api/**"
     }
