@@ -1,5 +1,7 @@
 using System.Net;
 
+using Microsoft.AspNetCore.Mvc;
+
 using Newtonsoft.Json;
 
 namespace DuitKu.Middleware
@@ -25,22 +27,14 @@ namespace DuitKu.Middleware
 
                 var statusCode = context.Response.StatusCode;
 
-                if (statusCode == StatusCodes.Status401Unauthorized)
+                if (statusCode == StatusCodes.Status404NotFound)
                 {
                     context.Response.ContentType = "application/json";
-                    var response = new
+                    var response = new ProblemDetails
                     {
-                        message = "Login dulu ya bre"
-                    };
-
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
-                }
-
-                if(statusCode == StatusCodes.Status404NotFound) {
-                    context.Response.ContentType = "application/json";
-                    var response = new
-                    {
-                        message = "Wah gak nemu data nya nih"
+                        Title = "Waduh gak nemu ni bre",
+                        Status = StatusCodes.Status404NotFound,
+                        Instance = context.Request.Path,
                     };
 
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(response));

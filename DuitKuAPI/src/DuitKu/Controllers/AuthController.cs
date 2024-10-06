@@ -1,6 +1,11 @@
 using DuitKu.Services;
+using DuitKu.Persistance.Database;
 using DuitKu.DTOs;
+using DuitKu.Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace DuitKu.Controllers
 {
@@ -9,10 +14,12 @@ namespace DuitKu.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
+        private readonly ApplicationDBContext _context;
 
-        public AuthController(AuthService authService)
+        public AuthController(AuthService authService, ApplicationDBContext context)
         {
             _authService = authService;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -53,6 +60,24 @@ namespace DuitKu.Controllers
             if (token == null) return Unauthorized();
 
             return Ok(new { token });
+        }
+
+        [Authorize]
+        [HttpPost("user")]
+        public async Task<IActionResult> GetUser()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var authUser = await _context.User
+                .Where(user => user.Id == Guid.Parse(userId))
+                .Select(user => new User
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                })
+                .FirstAsync();
+
+            return Ok(new { user = authUser });
         }
     }
 }

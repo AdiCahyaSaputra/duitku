@@ -58,25 +58,25 @@ const { toast } = useToast();
 const {
   isPending,
   isError,
-  mutate: register,
+  mutate: registerMutate,
 } = useMutation({
   mutationFn: registerUser,
   onSuccess: (res) => {
     toast({
       title: "Notifikasi",
-      description: "Teleport ke menu utama..."
-    })
+      description: "Teleport ke menu utama...",
+    });
   },
   onError: (err) => {
     toast({
       title: "Waduh ada error",
-      description: "Ada yang salah dari sisi server wkwkwk" 
+      description: "Ada yang salah dari sisi server wkwkwk",
     });
   },
 });
 
 const onSubmit = form.handleSubmit((formValues: RegisterUserDto) => {
-  register(formValues);
+  registerMutate(formValues);
 });
 </script>
 

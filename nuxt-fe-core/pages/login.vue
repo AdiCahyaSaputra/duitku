@@ -2,6 +2,11 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
+import { useToast } from "@/components/ui/toast/use-toast";
+import { useUser } from "@/composables/use-user";
+import { login } from "@/services/auth-service";
+import type LoginUserDto from "@/dto/LoginUserDto";
+import type { ApiErrorDto } from "@/dto/BaseResponseDto";
 
 definePageMeta({
   layout: "default",
@@ -40,10 +45,34 @@ const form = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = form.handleSubmit((formValues) => {
-  console.log(formValues);
+const { toast } = useToast();
+const { setAuthToken } = useUser();
+
+const {
+  isPending,
+  isError,
+  mutate: loginMutate,
+} = useMutation({
+  mutationFn: login,
+  onSuccess: (res: any) => {
+    setAuthToken(res.token);
+
+    toast({
+      title: "Notifikasi",
+      description: "Teleport ke menu utama...",
+    });
+  },
+  onError: (err: ApiErrorDto) => {
+    toast({
+      title: "Waduh ada error",
+      description: err.title,
+    });
+  },
 });
 
+const onSubmit = form.handleSubmit((formValues: LoginUserDto) => {
+  loginMutate(formValues);
+});
 </script>
 
 <template>
@@ -74,7 +103,10 @@ const onSubmit = form.handleSubmit((formValues) => {
           </FormField>
         </div>
 
-        <Button class="mt-4 w-full" type="submit">Gasss 👌</Button>
+        <Button class="mt-4 w-full" type="submit" :disabled="isPending">
+          <span v-if="isPending">Proses...</span>
+          <span v-else>Gasss 👌</span>
+        </Button>
       </form>
 
       <hr class="my-4" />

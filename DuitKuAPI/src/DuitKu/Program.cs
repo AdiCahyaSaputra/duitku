@@ -7,6 +7,7 @@ var SecretKey = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
 builder.Services
     .Boot()
     .AddJWTAuthentication(SecretKey)
+    .AddCorsConfig()
     .AddAuthorization();
 
 var app = builder.Build();
