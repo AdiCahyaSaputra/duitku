@@ -41,7 +41,7 @@ namespace DuitKu.Controllers
             }
             catch (System.Exception)
             {
-                return StatusCode(500, new { Message = "Waduh gak bisa register nih bre" });
+                return StatusCode(500, new ProblemDetails { Title = "Waduh gak bisa register nih bre" });
             }
 
         }

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@hebilicious/vue-query-nuxt": "^0.3.0",
+    "@nuxt/fonts": "^0.9.2",
+    "@nuxt/icon": "^1.5.4",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@radix-icons/vue": "^1.0.0",
     "@tanstack/vue-query": "^5.59.1",
@@ -29,6 +31,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.7",
     "typescript": "^5.6.2",
     "vue-tsc": "^2.1.6"
   }

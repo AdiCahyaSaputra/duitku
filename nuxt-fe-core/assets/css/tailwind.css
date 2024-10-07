@@ -76,3 +76,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+  }
+}

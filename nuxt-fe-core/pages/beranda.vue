@@ -8,13 +8,10 @@ definePageMeta({
 useHead({
   title: "Beranda",
 });
-
-const { user, revokeAuthToken } = useUser();
 </script>
 
 <template>
-  <div>
-    <h1>Hi {{ user?.name }}</h1>
-    <Button @click="revokeAuthToken">Logout</Button>
+  <div class="h-[2000px]">
+
   </div>
 </template>
