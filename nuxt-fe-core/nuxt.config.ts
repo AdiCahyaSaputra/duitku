@@ -1,5 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    apiBase: process.env.NUXT_PUBLIC_API,
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API
+    }
+  },
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   modules: [
@@ -28,7 +34,7 @@ export default defineNuxtConfig({
   routeRules: {
     "/duit-ku/api/**": {
       cors: true,
-      proxy: "http://localhost:5143/api/**",
+      proxy: process.env.NUXT_PUBLIC_API + "/api/**",
     },
   },
   icon: {

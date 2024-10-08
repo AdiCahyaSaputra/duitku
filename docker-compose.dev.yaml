@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  nuxt_app:
+    build:
+      context: ./nuxt-fe-core
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NUXT_PUBLIC_API: ${NUXT_PUBLIC_API}
+    volumes:
+      - ./nuxt-fe-core:/app
+      - /app/node_modules
+    networks:
+      - app-network
+  aspnet_app:
+    build:
+      context: ./DuitKuAPI/src/DuitKu
+      dockerfile: Dockerfile
+      args:
+        DB: ${DB}
+        JWT_KEY: ${JWT_KEY}
+    ports:
+      - "8080:80" # Baca dulu bre, lapan puluh lapan puluh bukan lapan ribu
+    environment:
+      DB: ${DB}
+      JWT_KEY: ${JWT_KEY}
+    depends_on:
+      - db
+    networks:
+      - app-network
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+volumes:
+  pg_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -10,11 +10,13 @@ namespace DuitKu.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        private readonly IConfiguration _configuration;
 
-        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, IConfiguration config)
         {
             _next = next;
             _logger = logger;
+            _configuration = config;
         }
 
         public async Task InvokeAsync(HttpContext context)
