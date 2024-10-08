@@ -55,12 +55,12 @@ const {
 } = useMutation({
   mutationFn: login,
   onSuccess: (res: any) => {
-    setAuthToken(res.token);
-
     toast({
       title: "Notifikasi",
       description: "Teleport ke menu utama...",
     });
+
+    setAuthToken(res.token);
   },
   onError: (err: ApiErrorDto) => {
     toast({

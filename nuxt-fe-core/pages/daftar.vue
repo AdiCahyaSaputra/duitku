@@ -54,6 +54,7 @@ const form = useForm({
 });
 
 const { toast } = useToast();
+const { setAuthToken } = useUser();
 
 const {
   isPending,
@@ -66,6 +67,8 @@ const {
       title: "Notifikasi",
       description: "Teleport ke menu utama...",
     });
+
+    setAuthToken(res.token);
   },
   onError: (err) => {
     toast({
