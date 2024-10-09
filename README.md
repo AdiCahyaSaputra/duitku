@@ -8,7 +8,7 @@ cp -r .env.example .env # Jangan lupa isi env nya (cuma JWT_KEY nya aja sih wkwk
 # Langsung build pake docker compose aja
 
 ```bash
-docker-compose -f docker-compose.db.dev.yaml up --build && docker-compose -f docker-compose.app.dev.yaml up --build
+docker-compose -f docker-compose.db.dev.yaml up --build -d && docker-compose -f docker-compose.app.dev.yaml up --build -d
 
 ```
 
@@ -19,6 +19,7 @@ docker-compose -f docker-compose.db.dev.yaml up --build && docker-compose -f doc
 - Update database via migration
 
 ![image](https://github.com/user-attachments/assets/73d78d8f-fd28-45d5-9dcc-043415882982)
+- Windows Pride 🤘
 
 # Info
 - SDK .NET Core versi 8.0.402
