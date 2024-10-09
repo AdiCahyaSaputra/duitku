@@ -25,3 +25,24 @@ docker-compose -f docker-compose.db.dev.yaml up --build && docker-compose -f doc
 - Bun versi 1.1.29
 - ASP.NET Core 8 pake template webapi 
 - NuxtJS + Shadcn/UI Vue (Typescript ready)
+
+# Url
+Pastiin `migration` nya udah kelar dulu ya bre sesuai yang di ss
+
+- 🚀 Frontend : 
+```bash
+http://localhost:3000/login
+```
+- 🔥 API : 
+```bash
+http://localhost:8080/api
+```
+- 🤖 DB (konek-in pake dbeaver) : 
+```bash
+Host `localhost`
+Port `5433`
+Username `postgres`
+Password `postgres`
+Database `duit_ku`
+
+```
