@@ -28,6 +28,19 @@ namespace DuitKu.Controllers
             return await _transactionService.GetAllTransactions(Guid.Parse(userId));
         }
 
+        [HttpGet("with")]
+        public async Task<IEnumerable<TransactionsWithRelation>> GetAllTransactionsWith(bool account, bool category, bool subcategory)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+            return await _transactionService.GetAllTransactionsWith(
+                Guid.Parse(userId),
+                account,
+                category,
+                subcategory
+            );
+        }
+
         [HttpGet("{transactionId:guid}")]
         public async Task<ActionResult<Transaction>> Show(Guid transactionId)
         {

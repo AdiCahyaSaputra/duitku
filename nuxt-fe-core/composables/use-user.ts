@@ -9,7 +9,9 @@ export const useUser = () => {
   const router = useRouter();
   const jwtToken = useState<string | null>("token", () => null);
 
-  const isGuestRoute = ['/login', '/daftar'].includes(router.currentRoute.value.fullPath);
+  const isGuestRoute = ["/login", "/daftar"].includes(
+    router.currentRoute.value.fullPath,
+  );
 
   const {
     data: user,
@@ -58,18 +60,13 @@ export const useUser = () => {
     const token = await getToken();
 
     if (token) {
-      if(isGuestRoute) {
-        navigateTo('/beranda');
+      if (isGuestRoute) {
+        navigateTo("/beranda");
       }
 
       jwtToken.value = token;
 
       refetch();
-    } else {
-
-      if(!isGuestRoute) {
-        navigateTo("/login");
-      }
     }
   });
 

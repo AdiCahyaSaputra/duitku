@@ -39,5 +39,8 @@ namespace DuitKu.Domain
 
         [Column("amount")]
         public decimal Amount { get; set; } 
+
+        [Column("date")]
+        public DateTime Date { get; set; }
     }
 }

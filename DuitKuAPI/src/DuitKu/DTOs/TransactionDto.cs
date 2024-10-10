@@ -9,6 +9,8 @@ namespace DuitKu.DTOs
         [Required(ErrorMessage = "Deskripsi wajib di isi")]
         public string Description { get; set; } = default!;
 
+        public DateTime? Date { get; set; } = null;
+
         [RequiredMin(100.0, ErrorMessage = "Jumlah Uang wajib di isi dan harus lebih dari 100")]
         public decimal Amount { get; set; }
 

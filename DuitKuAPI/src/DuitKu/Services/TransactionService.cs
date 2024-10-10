@@ -18,6 +18,16 @@ namespace DuitKu.Services
             return await _transactionRepository.GetAllAsync(userId);
         }
 
+        public async Task<IEnumerable<TransactionsWithRelation>> GetAllTransactionsWith(
+            Guid userId,
+            bool account,
+            bool category,
+            bool subcategory
+        )
+        {
+            return await _transactionRepository.GetAllWithRelationAsync(userId, account, category, subcategory);
+        }
+
         public async Task<Transaction> GetById(Guid transactionId, Guid userId)
         {
             return await _transactionRepository.GetByIdAsync(transactionId, userId);
@@ -33,6 +43,7 @@ namespace DuitKu.Services
                 CategoryId = dto.CategoryId,
                 SubCategoryId = dto.SubCategoryId,
                 UserId = dto.UserId,
+                Date = dto.Date ?? DateTime.UtcNow,
             };
 
             await _transactionRepository.AddAsync(transaction);

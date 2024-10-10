@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using DuitKu.Domain;
 using DuitKu.Persistance.Database;
+using DuitKu.DTOs;
 
 namespace DuitKu.Persistance.Repository
 {
@@ -33,6 +34,53 @@ namespace DuitKu.Persistance.Repository
                     Amount = transaction.Amount,
                     CreatedAt = transaction.CreatedAt,
                     UpdatedAt = transaction.UpdatedAt,
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TransactionsWithRelation>> GetAllWithRelationAsync(
+            Guid userId,
+            bool account,
+            bool category,
+            bool subcategory
+        )
+        {
+            var query = _context.Transactions
+                .Where(transaction => transaction.UserId == userId);
+
+            if(account) {
+                query.Include("Account");
+            }
+
+            if(category) {
+                query.Include("Category");
+            }
+
+            if(subcategory) {
+                query.Include("SubCategory");
+            }
+
+            return await query
+                .Select(transaction => new TransactionsWithRelation
+                {
+                    Id = transaction.Id,
+                    Category = category ? new Category {
+                        Id = transaction.Category.Id,
+                        Name = transaction.Category.Name,
+                    } : null,
+                    SubCategory = subcategory && transaction.SubCategoryId.HasValue ? new SubCategory {
+                        Id = transaction.SubCategory.Id,
+                        Name = transaction.SubCategory.Name,
+                    } : null,
+                    Account = account ? new Account {
+                        Id = transaction.Account.Id,
+                        Name = transaction.Account.Name,
+                        CreatedAt = transaction.Account.CreatedAt,
+                        UpdatedAt = transaction.Account.UpdatedAt,
+                    } : null,
+                    Description = transaction.Description,
+                    Amount = transaction.Amount,
+                    Date = transaction.Date
                 })
                 .ToListAsync();
         }
