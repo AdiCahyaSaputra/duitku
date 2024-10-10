@@ -87,6 +87,7 @@ namespace DuitKu.Controllers
             transaction.AccountId = dto.AccountId;
             transaction.CategoryId = dto.CategoryId;
             transaction.Description = dto.Description;
+            transaction.Date = dto.Date ?? DateTime.UtcNow;
             transaction.UserId = Guid.Parse(userId);
 
             await _transactionService.UpdateTransaction(transaction);
