@@ -67,6 +67,10 @@ export const useUser = () => {
       jwtToken.value = token;
 
       refetch();
+    } else {
+      if (!isGuestRoute) {
+        return navigateTo("/login");
+      }
     }
   });
 
