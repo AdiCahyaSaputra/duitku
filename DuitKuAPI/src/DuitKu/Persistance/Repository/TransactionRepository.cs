@@ -19,9 +19,17 @@ namespace DuitKu.Persistance.Repository
             // _logger = logger;
         }
 
+        public async Task<int> GetTotalRecord(Guid userId)
+        {
+            return await _context.Transactions
+                .Where(transaction => transaction.UserId == userId)
+                .CountAsync();
+        }
+
         public async Task<IEnumerable<Transaction>> GetAllAsync(Guid userId)
         {
             return await _context.Transactions
+                .AsNoTracking()
                 .Where(transaction => transaction.UserId == userId)
                 .Select(transaction => new Transaction
                 {
@@ -42,11 +50,17 @@ namespace DuitKu.Persistance.Repository
             Guid userId,
             bool account,
             bool category,
-            bool subcategory
+            bool subcategory,
+            int pageNumber
         )
         {
+            int pageSize = 10;
+
             var query = _context.Transactions
-                .Where(transaction => transaction.UserId == userId);
+                .AsNoTracking() // This data is for read only purpose, so no tracking needed
+                .Where(transaction => transaction.UserId == userId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
 
             if (account)
             {
@@ -95,6 +109,7 @@ namespace DuitKu.Persistance.Repository
         public async Task<Transaction> GetByIdAsync(Guid transactionId, Guid userId)
         {
             return await _context.Transactions
+                .AsNoTracking()
                 .Where(transaction => transaction.UserId == userId)
                 .Where(transaction => transaction.Id == transactionId)
                 .Select(transaction => new Transaction

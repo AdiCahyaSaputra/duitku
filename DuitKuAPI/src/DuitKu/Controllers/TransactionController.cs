@@ -29,16 +29,29 @@ namespace DuitKu.Controllers
         }
 
         [HttpGet("with")]
-        public async Task<IEnumerable<TransactionsWithRelation>> GetAllTransactionsWith(bool account, bool category, bool subcategory)
+        public async Task<ActionResult> GetAllTransactionsWith(
+            bool account,
+            bool category,
+            bool subcategory,
+            int? pageNumber)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var totalTransactionsRecord = await _transactionService.GetTotalRecord(Guid.Parse(userId));
 
-            return await _transactionService.GetAllTransactionsWith(
+            var transactions = await _transactionService.GetAllTransactionsWith(
                 Guid.Parse(userId),
                 account,
                 category,
-                subcategory
+                subcategory,
+                pageNumber ?? 1
             );
+
+            return Ok(new
+            {
+                isPreviousExists = (pageNumber ?? 1) > 1,
+                isNextExists = (pageNumber ?? 1) * 10 < totalTransactionsRecord,
+                transactions
+            });
         }
 
         [HttpGet("{transactionId:guid}")]

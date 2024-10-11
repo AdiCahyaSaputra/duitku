@@ -13,6 +13,11 @@ namespace DuitKu.Services
             _transactionRepository = repository;
         }
 
+        public async Task<int> GetTotalRecord(Guid userId)
+        {
+            return await _transactionRepository.GetTotalRecord(userId);
+        }
+
         public async Task<IEnumerable<Transaction>> GetAllTransactions(Guid userId)
         {
             return await _transactionRepository.GetAllAsync(userId);
@@ -22,10 +27,10 @@ namespace DuitKu.Services
             Guid userId,
             bool account,
             bool category,
-            bool subcategory
-        )
+            bool subcategory,
+            int pageNumber)
         {
-            return await _transactionRepository.GetAllWithRelationAsync(userId, account, category, subcategory);
+            return await _transactionRepository.GetAllWithRelationAsync(userId, account, category, subcategory, pageNumber);
         }
 
         public async Task<Transaction> GetById(Guid transactionId, Guid userId)
