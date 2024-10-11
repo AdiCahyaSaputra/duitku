@@ -48,15 +48,18 @@ namespace DuitKu.Persistance.Repository
             var query = _context.Transactions
                 .Where(transaction => transaction.UserId == userId);
 
-            if(account) {
+            if (account)
+            {
                 query.Include("Account");
             }
 
-            if(category) {
+            if (category)
+            {
                 query.Include("Category");
             }
 
-            if(subcategory) {
+            if (subcategory)
+            {
                 query.Include("SubCategory");
             }
 
@@ -64,17 +67,21 @@ namespace DuitKu.Persistance.Repository
                 .Select(transaction => new TransactionsWithRelation
                 {
                     Id = transaction.Id,
-                    Category = category ? new Category {
+                    Category = category ? new Category
+                    {
                         Id = transaction.Category.Id,
                         Name = transaction.Category.Name,
                     } : null,
-                    SubCategory = subcategory && transaction.SubCategoryId.HasValue ? new SubCategory {
+                    SubCategory = subcategory && transaction.SubCategoryId.HasValue ? new SubCategory
+                    {
                         Id = transaction.SubCategory.Id,
                         Name = transaction.SubCategory.Name,
                     } : null,
-                    Account = account ? new Account {
+                    Account = account ? new Account
+                    {
                         Id = transaction.Account.Id,
                         Name = transaction.Account.Name,
+                        Balance = transaction.Account.Balance,
                         CreatedAt = transaction.Account.CreatedAt,
                         UpdatedAt = transaction.Account.UpdatedAt,
                     } : null,
@@ -107,16 +114,48 @@ namespace DuitKu.Persistance.Repository
 
         public async Task AddAsync(Transaction transaction)
         {
-            _context.Transactions.Add(transaction);
+            var dbTransaction = await _context.Database.BeginTransactionAsync();
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Account
+                    .Where(account => account.Id == transaction.AccountId)
+                    .ExecuteUpdateAsync(setter => setter
+                            .SetProperty(account => account.Balance, account => account.Balance - transaction.Amount));
+
+                _context.Transactions.Add(transaction);
+
+                await _context.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
 
-        public async Task UpdateAsync(Transaction transaction)
+        public async Task UpdateAsync(Transaction transaction, decimal oldAmount)
         {
-            _context.Transactions.Update(transaction);
+            var dbTransaction = await _context.Database.BeginTransactionAsync();
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Account
+                    .Where(account => account.Id == transaction.AccountId)
+                    .ExecuteUpdateAsync(setter => setter
+                            .SetProperty(account => account.Balance, account => (account.Balance + oldAmount) - transaction.Amount));
+
+                _context.Transactions.Update(transaction);
+
+                await _context.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task DeleteAsync(Guid transactionId, Guid userId)
@@ -128,9 +167,25 @@ namespace DuitKu.Persistance.Repository
 
             if (transaction != null)
             {
-                _context.Transactions.Remove(transaction);
+                var dbTransaction = await _context.Database.BeginTransactionAsync();
 
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.Account
+                        .Where(account => account.Id == transaction.AccountId)
+                        .ExecuteUpdateAsync(setter => setter
+                                .SetProperty(account => account.Balance, account => account.Balance + transaction.Amount));
+
+                    _context.Transactions.Remove(transaction);
+
+                    await _context.SaveChangesAsync();
+                    await dbTransaction.CommitAsync();
+                }
+                catch
+                {
+                    await dbTransaction.RollbackAsync();
+                    throw;
+                }
             }
         }
     }

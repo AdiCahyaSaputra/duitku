@@ -51,9 +51,9 @@ namespace DuitKu.Services
             return transaction;
         }
 
-        public async Task<Transaction> UpdateTransaction(Transaction transaction)
+        public async Task<Transaction> UpdateTransaction(Transaction transaction, decimal oldAmount)
         {
-            await _transactionRepository.UpdateAsync(transaction);
+            await _transactionRepository.UpdateAsync(transaction, oldAmount);
 
             return transaction;
         }

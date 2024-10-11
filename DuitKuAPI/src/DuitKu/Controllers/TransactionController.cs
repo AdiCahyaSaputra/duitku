@@ -83,6 +83,8 @@ namespace DuitKu.Controllers
                 return BadRequest("Waduh gak bisa update transaksi nya");
             }
 
+            var oldAmount = transaction.Amount;
+
             transaction.Amount = dto.Amount;
             transaction.AccountId = dto.AccountId;
             transaction.CategoryId = dto.CategoryId;
@@ -90,7 +92,7 @@ namespace DuitKu.Controllers
             transaction.Date = dto.Date ?? DateTime.UtcNow;
             transaction.UserId = Guid.Parse(userId);
 
-            await _transactionService.UpdateTransaction(transaction);
+            await _transactionService.UpdateTransaction(transaction, oldAmount);
 
             return Ok(new { Message = "Ok Transaksi nya berhasil di update" });
         }
