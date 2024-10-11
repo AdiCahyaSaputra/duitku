@@ -18,3 +18,15 @@ export const transformDotNetTimestamp = (datetime: string) => {
 
   return result;
 };
+
+export const createQueryStringParams = (params: { [key: string]: any }) => {
+  const queryString = [];
+
+  for(const [key, value] of Object.entries(params)) {
+    if(!!value) {
+      queryString.push(`${key}=${value}`);
+    }
+  }
+
+  return queryString.join('&');
+}

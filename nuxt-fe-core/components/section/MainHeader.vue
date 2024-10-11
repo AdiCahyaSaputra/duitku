@@ -11,7 +11,7 @@ import {
 
 const headerElement = ref<HTMLElement | null>(null);
 
-const emit = defineEmits(['updateHeaderHeight']);
+const emit = defineEmits(["updateHeaderHeight"]);
 
 const { user, revokeAuthToken } = useUser();
 
@@ -19,7 +19,7 @@ onMounted(() => {
   if (headerElement.value) {
     const height = headerElement.value.offsetHeight;
 
-    emit('updateHeaderHeight', height);
+    emit("updateHeaderHeight", height);
   }
 });
 </script>
@@ -36,23 +36,25 @@ onMounted(() => {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">
             <Avatar class="bg-transparent">
-              <AvatarFallback class="bg-transparent font-bold">{{
-                user?.name[0].toUpperCase()
-              }}</AvatarFallback>
+              <ClientOnly>
+                <AvatarFallback class="bg-transparent font-bold">{{
+                  user?.name[0].toUpperCase()
+                }}</AvatarFallback>
+              </ClientOnly>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel class="text-base">Pengaturan</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <NuxtLink to="/pengaturan/mata-uang">
+          <NuxtLink to="/beranda">
             <DropdownMenuItem class="cursor-pointer">
               <Icon name="lucide:badge-dollar-sign" class="w-4 h-4 mr-2" />
               <span class="text-sm text-black/80">Mata Uang</span>
             </DropdownMenuItem>
           </NuxtLink>
 
-          <NuxtLink to="pengaturan/profil">
+          <NuxtLink to="/beranda">
             <DropdownMenuItem class="cursor-pointer">
               <Icon name="lucide:user" class="w-4 h-4 mr-2" />
               <span class="text-sm text-black/80">Profil Mu</span>
@@ -61,21 +63,17 @@ onMounted(() => {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            class="focus:bg-transparent flex flex-col items-start"
-          >
-            <p class="font-bold">{{ user?.name }}</p>
-            <p class="text-xs">{{ user?.email }}</p>
-          </DropdownMenuItem>
-          <Button
-            variant="destructive"
-            size="sm"
-            class="w-full flex justify-between items-center mt-2"
-            @click="revokeAuthToken"
-          >
-            <span class="text-sm font-bold text-white">Keluar</span>
-            <Icon name="lucide:log-out" class="w-4 h-4" />
-          </Button>
+          <ClientOnly>
+            <DropdownMenuItem class="focus:bg-transparent flex flex-col items-start">
+              <p class="font-bold">{{ user?.name }}</p>
+              <p class="text-xs">{{ user?.email }}</p>
+            </DropdownMenuItem>
+            <Button variant="destructive" size="sm" class="w-full flex justify-between items-center mt-2"
+              @click="revokeAuthToken">
+              <span class="text-sm font-bold text-white">Keluar</span>
+              <Icon name="lucide:log-out" class="w-4 h-4" />
+            </Button>
+          </ClientOnly>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

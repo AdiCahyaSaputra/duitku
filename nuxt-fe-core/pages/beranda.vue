@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { headerStore } from "@/store/header.store";
+
 definePageMeta({
   layout: "main-default",
 });
 
 useHead({
   title: "Beranda",
+});
+
+const headerHeight = ref(0);
+
+headerStore().$subscribe((_, state) => {
+  headerHeight.value = state.headerHeight;
 });
 </script>
 
@@ -15,17 +23,17 @@ useHead({
       <SectionBerandaTotalPengeluaran />
     </div>
 
-    <div class="flex justify-between gap-2 p-4">
+    <div class="flex justify-between gap-2 p-4 sticky bg-white supports-[backdrop-filter]:bg-white/60 border-b supports-[backdrop-filter]:backdrop-blur-md" :style="{ top: `${headerHeight}px` }">
       <div class="flex w-full md:max-w-sm items-center gap-1.5 relative">
         <Input type="text" placeholder="Cari" class="w-full" />
         <Button class="absolute right-0 rounded-l-none" size="icon">
-          <Icon name="lucide:search"/>
+          <Icon name="lucide:search" />
         </Button>
       </div>
       <div class="flex items-center gap-2">
         <Button class="w-full md:flex hidden items-center justify-between">
-          <span>Buat Transaksi</span>
           <Icon name="lucide:circle-fading-plus" class="w-4 h-4" />
+          <span>Buat Transaksi</span>
         </Button>
         <Button size="icon" class="md:hidden">
           <Icon name="lucide:circle-fading-plus" />
@@ -36,7 +44,7 @@ useHead({
       </div>
     </div>
 
-    <div class="p-4 pt-0">
+    <div class="p-4">
       <SectionBerandaListTransaksi />
     </div>
   </div>

@@ -11,9 +11,11 @@ import {
 import { transformDotNetTimestamp } from "@/lib/helper";
 import { getTransactions } from "@/services/transaction-service";
 
+const pageNumber = ref(1);
+
 const { data, isLoading } = useQuery({
-  queryKey: ["get_transactions"],
-  queryFn: getTransactions,
+  queryKey: ["get_transactions", pageNumber],
+  queryFn: async () => await getTransactions(pageNumber.value),
 });
 </script>
 
@@ -21,9 +23,9 @@ const { data, isLoading } = useQuery({
   <ReusableStateLoading :is-loading="isLoading">
     <template #content>
       <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
-        <ReusableStateEmpty :is-empty="!data?.length">
+        <ReusableStateEmpty :is-empty="!data">
           <template #content>
-            <Card v-for="(transaction, idx) in data" :key="idx" class="select-none">
+            <Card v-for="(transaction, idx) in data?.transactions" :key="idx" class="select-none">
               <CardHeader class="space-y-3">
                 <CardDescription class="gap-1 flex flex-col">
                   <Badge class="px-2 w-max bg-emerald-500">{{
@@ -52,6 +54,15 @@ const { data, isLoading } = useQuery({
                 </Button>
               </CardFooter>
             </Card>
+
+            <div class="mt-4 space-x-2">
+              <Button variant="outline" size="icon" :disabled="!data?.isPreviousExists">
+                <Icon name="lucide:chevron-left" />
+              </Button>
+              <Button variant="outline" size="icon" :disabled="!data?.isNextExists">
+                <Icon name="lucide:chevron-right" />
+              </Button>
+            </div>
           </template>
 
           <template #emptyFallback>

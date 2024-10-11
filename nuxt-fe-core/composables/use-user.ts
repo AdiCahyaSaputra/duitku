@@ -1,4 +1,5 @@
 import { getAuthUser } from "@/services/auth-service";
+import { userStore } from "@/store/user.store";
 
 type TSetToken = {
   message: string;
@@ -6,21 +7,7 @@ type TSetToken = {
 } | null;
 
 export const useUser = () => {
-  const router = useRouter();
-  const jwtToken = useState<string | null>("token", () => null);
-
-  const isGuestRoute = ["/login", "/daftar"].includes(
-    router.currentRoute.value.fullPath,
-  );
-
-  const {
-    data: user,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["get_user", jwtToken],
-    queryFn: async () => await getAuthUser(jwtToken.value),
-  });
+  const { user, setUser } = userStore();
 
   const getToken = async () => {
     // Kalo pake useFetch sering undefined pas di client nya
@@ -40,9 +27,9 @@ export const useUser = () => {
     const createdToken = (data.value as TSetToken)?.token;
 
     if (createdToken) {
-      jwtToken.value = createdToken;
+      const user = await getAuthUser(createdToken);
 
-      refetch();
+      setUser(user);
 
       navigateTo("/beranda");
     }
@@ -53,31 +40,20 @@ export const useUser = () => {
       method: "DELETE",
     });
 
+    setUser(null);
+
     navigateTo("/login");
   };
 
-  onMounted(async () => {
-    const token = await getToken();
-
-    if (token) {
-      if (isGuestRoute) {
-        navigateTo("/beranda");
-      }
-
-      jwtToken.value = token;
-
-      refetch();
-    } else {
-      if (!isGuestRoute) {
-        return navigateTo("/login");
-      }
-    }
-  });
+  const setAuthUser = async (token: string) => {
+    const user = await getAuthUser(token);
+    
+    setUser(user);
+  }
 
   return {
     user,
-    refetch,
-    isLoading,
+    setAuthUser,
     getToken,
     setAuthToken,
     revokeAuthToken,

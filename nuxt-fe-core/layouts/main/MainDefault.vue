@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { headerStore } from "@/store/header.store";
+
+const { setHeaderHeight } = headerStore();
+
 const headerHeight = ref(0);
 const open = ref(false);
 
@@ -8,12 +12,13 @@ const toggleOpen = (openState: boolean) => {
 
 const updateHeaderHeight = (height: number) => {
   headerHeight.value = height;
+  setHeaderHeight(height);
 };
 </script>
 
 <template>
   <div class="selection:bg-green-700 selection:text-white relative">
-    <SectionMainHeader @updateHeaderHeight="updateHeaderHeight" />
+    <SectionMainHeader @update-header-height="updateHeaderHeight" />
     <main class="flex relative">
       <SectionMainSideBar :open="open" :headerHeight="headerHeight" />
       <ReusableAsideOpenMenu :open="open" @toggleOpen="toggleOpen" />

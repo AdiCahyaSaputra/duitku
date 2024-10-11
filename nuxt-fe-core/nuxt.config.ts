@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     "@hebilicious/vue-query-nuxt",
     "@nuxt/icon",
     "@nuxt/fonts",
+    "@pinia/nuxt",
   ],
   fonts: {
     google: {

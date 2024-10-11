@@ -44,6 +44,6 @@ export const getAuthUser = async (
 
     return (data as { user: UserDto }).user;
   } catch (err) {
-    return null;
+    throw err;
   }
 };
