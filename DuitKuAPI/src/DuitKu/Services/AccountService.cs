@@ -1,5 +1,4 @@
 using DuitKu.Persistance.Repository;
-using DuitKu.Persistance.Database;
 using DuitKu.Domain;
 using DuitKu.DTOs;
 
@@ -14,9 +13,14 @@ namespace DuitKu.Services
             _accountRepository = repository;
         }
 
-        public async Task<IEnumerable<Account>> GetAllAccount(Guid userId)
+        public async Task<int> GetTotalRecord(Guid userId)
         {
-            var accounts = await _accountRepository.GetAllAsync(userId);
+            return await _accountRepository.GetTotalRecord(userId);
+        }
+
+        public async Task<IEnumerable<Account>> GetAllAccount(Guid userId, BaseParamFilterDto filterDto)
+        {
+            var accounts = await _accountRepository.GetAllAsync(userId, filterDto);
 
             return accounts;
         }

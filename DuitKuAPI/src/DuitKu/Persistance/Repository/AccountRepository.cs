@@ -8,22 +8,53 @@ namespace DuitKu.Persistance.Repository
     public class AccountRepository
     {
         private readonly ApplicationDBContext _context;
-        // private readonly ILogger<AccountRepository> _logger;
+        private readonly ILogger<AccountRepository> _logger;
 
         public AccountRepository(
-            ApplicationDBContext context
-            // ILogger<AccountRepository> logger
+            ApplicationDBContext context,
+            ILogger<AccountRepository> logger
         )
         {
             _context = context;
-            // _logger = logger;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<Account>> GetAllAsync(Guid userId)
+        public async Task<int> GetTotalRecord(Guid userId)
         {
             return await _context.Account
                 .Where(account => account.UserId == userId)
-                .Select(account => new Account
+                .CountAsync();
+        }
+
+        public async Task<IEnumerable<Account>> GetAllAsync(Guid userId, BaseParamFilterDto filterDto)
+        {
+            _logger.LogInformation(filterDto.search);
+
+            var query = _context.Account
+                .AsNoTracking()
+                .Where(account => account.UserId == userId);
+
+            int pageNumber = filterDto.pageNumber ?? 1;
+            int pageSize = filterDto.limit ?? 10;
+
+            if (filterDto.paginate)
+            {
+                query = query.Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize);
+            }
+
+            if (filterDto.search != null && !filterDto.paginate)
+            {
+                string searchString = filterDto.search!;
+                _logger.LogInformation($"Filter search string {searchString}");
+
+                query = query
+                    .Where(account => EF.Functions.Like(account.Name.ToLower(), $"%{searchString}%"))
+                    .Take(pageSize);
+            }
+
+            return await
+                query.Select(account => new Account
                 {
                     Id = account.Id,
                     Name = account.Name,

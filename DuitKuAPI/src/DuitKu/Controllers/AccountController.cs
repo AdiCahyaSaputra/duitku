@@ -4,28 +4,42 @@ using System.Security.Claims;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using DuitKu.Domain;
 
 namespace DuitKu.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly HelperService _helperService;
 
-        public AccountController(AccountService accountService)
+        public AccountController(
+            AccountService accountService,
+            HelperService helperService)
         {
             _accountService = accountService;
+            _helperService = helperService;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Account>> GetAllAccount()
+        public async Task<ActionResult> GetAllAccount(
+            [FromQuery] BaseParamFilterDto filterDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var totalAccountsRecord = await _accountService.GetTotalRecord(Guid.Parse(userId));
 
-            return await _accountService.GetAllAccount(Guid.Parse(userId));
+            var accounts = await _accountService.GetAllAccount(Guid.Parse(userId), filterDto);
+
+            var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit ?? 10, totalAccountsRecord);
+
+            return Ok(new
+            {
+                filterResponseApi.isNextExists,
+                filterResponseApi.isPreviousExists,
+                accounts
+            });
         }
 
         [HttpGet("transactions")]

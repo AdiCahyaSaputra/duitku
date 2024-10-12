@@ -51,16 +51,29 @@ namespace DuitKu.Persistance.Repository
             bool account,
             bool category,
             bool subcategory,
-            int pageNumber
+            BaseParamFilterDto filterDto
         )
         {
-            int pageSize = 10;
+            int pageNumber = filterDto.pageNumber ?? 1;
+            int pageSize = filterDto.limit ?? 10;
 
             var query = _context.Transactions
                 .AsNoTracking() // This data is for read only purpose, so no tracking needed
-                .Where(transaction => transaction.UserId == userId)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize);
+                .Where(transaction => transaction.UserId == userId);
+
+            if (filterDto.paginate)
+            {
+                query = query.Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize);
+            }
+
+            if(filterDto.search != null && !filterDto.paginate ) {
+                string searchString = filterDto.search!;
+
+                query = query
+                    .Where(transaction => EF.Functions.Like(transaction.Description, $"%{searchString}%"))
+                    .Take(pageSize);
+            }
 
             if (account)
             {

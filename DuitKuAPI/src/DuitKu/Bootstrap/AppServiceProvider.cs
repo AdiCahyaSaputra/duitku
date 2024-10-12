@@ -31,6 +31,7 @@ namespace DuitKu.Bootstrap
 
             services.AddScoped<JwtService>();
             services.AddScoped<AuthService>();
+            services.AddScoped<HelperService>();
 
             services.AddLogging(config =>
             {

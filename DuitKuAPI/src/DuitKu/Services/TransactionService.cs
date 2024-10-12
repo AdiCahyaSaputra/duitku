@@ -28,9 +28,9 @@ namespace DuitKu.Services
             bool account,
             bool category,
             bool subcategory,
-            int pageNumber)
+            BaseParamFilterDto filterDto)
         {
-            return await _transactionRepository.GetAllWithRelationAsync(userId, account, category, subcategory, pageNumber);
+            return await _transactionRepository.GetAllWithRelationAsync(userId, account, category, subcategory, filterDto);
         }
 
         public async Task<Transaction> GetById(Guid transactionId, Guid userId)

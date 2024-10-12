@@ -14,10 +14,14 @@ namespace DuitKu.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly TransactionService _transactionService;
+        private readonly HelperService _helperService;
 
-        public TransactionController(TransactionService transactionService)
+        public TransactionController(
+            TransactionService transactionService,
+            HelperService helperService)
         {
             _transactionService = transactionService;
+            _helperService = helperService;
         }
 
         [HttpGet]
@@ -33,7 +37,7 @@ namespace DuitKu.Controllers
             bool account,
             bool category,
             bool subcategory,
-            int? pageNumber)
+            [FromQuery] BaseParamFilterDto filterDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             var totalTransactionsRecord = await _transactionService.GetTotalRecord(Guid.Parse(userId));
@@ -43,13 +47,15 @@ namespace DuitKu.Controllers
                 account,
                 category,
                 subcategory,
-                pageNumber ?? 1
+                filterDto
             );
+
+            var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit ?? 10, totalTransactionsRecord);
 
             return Ok(new
             {
-                isPreviousExists = (pageNumber ?? 1) > 1,
-                isNextExists = (pageNumber ?? 1) * 10 < totalTransactionsRecord,
+                filterResponseApi.isPreviousExists,
+                filterResponseApi.isNextExists,
                 transactions
             });
         }
