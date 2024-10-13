@@ -32,7 +32,7 @@ namespace DuitKu.Controllers
 
             var accounts = await _accountService.GetAllAccount(Guid.Parse(userId), filterDto);
 
-            var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit ?? 10, totalAccountsRecord);
+            var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit, totalAccountsRecord);
 
             return Ok(new
             {

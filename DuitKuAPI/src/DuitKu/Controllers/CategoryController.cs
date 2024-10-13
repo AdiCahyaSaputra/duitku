@@ -14,18 +14,31 @@ namespace DuitKu.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly CategoryService _categoryService;
+        private readonly HelperService _helperService;
 
-        public CategoryController(CategoryService categoryService)
+        public CategoryController(CategoryService categoryService, HelperService helperService)
         {
             _categoryService = categoryService;
+            _helperService = helperService;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Category>> GetAllCategories()
+        public async Task<ActionResult> GetAllCategories(
+            [FromQuery] BaseParamFilterDto filterDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var totalCategoriesRecord = await _categoryService.GetTotalRecord(Guid.Parse(userId));
 
-            return await _categoryService.GetAllCategories(Guid.Parse(userId));
+            var categories = await _categoryService.GetAllCategories(Guid.Parse(userId), filterDto);
+
+            var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit, totalCategoriesRecord);
+
+            return Ok(new
+            {
+                filterResponseApi.isNextExists,
+                filterResponseApi.isPreviousExists,
+                categories
+            });
         }
 
         [HttpGet("{categoryId:guid}")]

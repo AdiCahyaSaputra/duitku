@@ -31,7 +31,7 @@ namespace DuitKu.Services
             {
                 string lowerCaseSearchString = searchString.ToLower();
 
-                query.Where(account => EF.Functions.Like(account.Name.ToLower(), $"%{lowerCaseSearchString}%"));
+                return query.Where(account => EF.Functions.Like(account.Name.ToLower(), $"%{lowerCaseSearchString}%"));
             });
 
             return await query.ToListAsync();

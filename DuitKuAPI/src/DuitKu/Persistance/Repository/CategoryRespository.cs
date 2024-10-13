@@ -7,29 +7,24 @@ namespace DuitKu.Persistance.Repository
     public class CategoryRepository
     {
         private readonly ApplicationDBContext _context;
-        // private readonly ILogger<CategoryRepository> _logger;
 
         public CategoryRepository(
             ApplicationDBContext context
-        // ILogger<AccountRepository> logger
         )
         {
             _context = context;
-            // _logger = logger;
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync(Guid userId)
+        public IQueryable<Category> GetEntities() 
+        {
+            return _context.Category;
+        }
+
+        public async Task<int> GetTotalRecord(Guid userId)
         {
             return await _context.Category
                 .Where(category => category.UserId == userId)
-                .Select(category => new Category
-                {
-                    Id = category.Id,
-                    Name = category.Name,
-                    CreatedAt = category.CreatedAt,
-                    UpdatedAt = category.UpdatedAt,
-                })
-                .ToListAsync();
+                .CountAsync();
         }
 
         public async Task<Category> GetByIdAsync(Guid categoryId, Guid userId)

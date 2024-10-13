@@ -36,7 +36,7 @@ namespace DuitKu.Services
             {
                 string lowerCaseSearchString = searchString.ToLower();
 
-                query.Where(transaction => EF.Functions.Like(transaction.Description.ToLower(), $"%{lowerCaseSearchString}%"));
+                return query.Where(transaction => EF.Functions.Like(transaction.Description.ToLower(), $"%{lowerCaseSearchString}%"));
             });
 
             query = query.Include("Account").Include("Category").Include("SubCategory");

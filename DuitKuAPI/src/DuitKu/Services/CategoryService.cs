@@ -1,23 +1,40 @@
 using DuitKu.Persistance.Repository;
 using DuitKu.Domain;
 using DuitKu.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace DuitKu.Services
 {
     public class CategoryService
     {
         private readonly CategoryRepository _categoryRepository;
+        private readonly QueryService<Category> _queryService;
 
-        public CategoryService(CategoryRepository repository)
+        public CategoryService(CategoryRepository repository, QueryService<Category> queryService)
         {
             _categoryRepository = repository;
+            _queryService = queryService;
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategories(Guid userId)
+        public async Task<int> GetTotalRecord(Guid userId)
         {
-            var categories = await _categoryRepository.GetAllAsync(userId);
+            return await _categoryRepository.GetTotalRecord(userId);
+        }
 
-            return categories;
+        public async Task<IEnumerable<Category>> GetAllCategories(Guid userId, BaseParamFilterDto filterDto)
+        {
+            var query = _categoryRepository.GetEntities()
+                .AsNoTracking()
+                .Where(category => category.UserId == userId);
+
+            query = _queryService.PaginateWithSearchFilter(query, filterDto, (query, searchString) =>
+            {
+                string lowerCaseSearchString = searchString.ToLower();
+
+                return query.Where(categoory => EF.Functions.Like(categoory.Name.ToLower(), $"%{lowerCaseSearchString}%"));
+            });
+
+            return await query.ToListAsync();
         }
 
         public async Task<Category> GetById(Guid categoryId, Guid userId)

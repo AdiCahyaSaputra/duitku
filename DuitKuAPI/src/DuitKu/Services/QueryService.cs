@@ -4,7 +4,7 @@ namespace DuitKu.Services
 {
     public class QueryService<TEntity>
     {
-        public delegate void SearchQuery(IQueryable<TEntity> query, string searchString);
+        public delegate IQueryable<TEntity> SearchQuery(IQueryable<TEntity> query, string searchString);
 
         public IQueryable<TEntity> PaginateWithSearchFilter(
             IQueryable<TEntity> query,
@@ -29,7 +29,7 @@ namespace DuitKu.Services
             {
                 string searchString = filterDto.search!;
 
-                searchQuery.Invoke(query, searchString);
+                query = searchQuery.Invoke(query, searchString);
 
                 if (pageSize > 0)
                 {
