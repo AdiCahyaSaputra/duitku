@@ -23,7 +23,9 @@ headerStore().$subscribe((_, state) => {
       <SectionBerandaTotalPengeluaran />
     </div>
 
-    <div class="flex justify-between gap-2 p-4 sticky bg-white supports-[backdrop-filter]:bg-white/60 border-b supports-[backdrop-filter]:backdrop-blur-md" :style="{ top: `${headerHeight}px` }">
+    <div
+      class="flex justify-between gap-2 p-4 sticky bg-white supports-[backdrop-filter]:bg-white/60 border-b supports-[backdrop-filter]:backdrop-blur-md"
+      :style="{ top: `${headerHeight}px` }">
       <div class="flex w-full md:max-w-sm items-center gap-1.5 relative">
         <Input type="text" placeholder="Cari" class="w-full" />
         <Button class="absolute right-0 rounded-l-none" size="icon">
@@ -31,13 +33,7 @@ headerStore().$subscribe((_, state) => {
         </Button>
       </div>
       <div class="flex items-center gap-2">
-        <Button class="w-full md:flex hidden items-center justify-between">
-          <Icon name="lucide:circle-fading-plus" class="w-4 h-4" />
-          <span>Buat Transaksi</span>
-        </Button>
-        <Button size="icon" class="md:hidden">
-          <Icon name="lucide:circle-fading-plus" />
-        </Button>
+        <SectionBerandaFormCreateTransaksi />
         <Button variant="outline" size="icon">
           <Icon name="lucide:filter" />
         </Button>

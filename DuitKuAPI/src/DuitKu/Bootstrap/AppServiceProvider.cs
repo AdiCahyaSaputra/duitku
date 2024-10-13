@@ -1,4 +1,5 @@
 using DuitKu.Persistance.Database;
+using DuitKu.Domain;
 using DuitKu.Persistance.Repository;
 using DuitKu.Services;
 
@@ -19,15 +20,19 @@ namespace DuitKu.Bootstrap
 
             services.AddScoped<AccountRepository>();
             services.AddScoped<AccountService>();
+            services.AddScoped<QueryService<Account>>();
 
             services.AddScoped<CategoryRepository>();
             services.AddScoped<CategoryService>();
+            services.AddScoped<QueryService<Category>>();
 
             services.AddScoped<SubCategoryRepository>();
             services.AddScoped<SubCategoryService>();
+            services.AddScoped<QueryService<SubCategory>>();
 
             services.AddScoped<TransactionRepository>();
             services.AddScoped<TransactionService>();
+            services.AddScoped<QueryService<Transaction>>();
 
             services.AddScoped<JwtService>();
             services.AddScoped<AuthService>();

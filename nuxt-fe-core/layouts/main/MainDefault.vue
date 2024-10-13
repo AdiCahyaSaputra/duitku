@@ -17,7 +17,7 @@ const updateHeaderHeight = (height: number) => {
 </script>
 
 <template>
-  <div class="selection:bg-green-700 selection:text-white relative">
+  <div class="relative">
     <SectionMainHeader @update-header-height="updateHeaderHeight" />
     <main class="flex relative">
       <SectionMainSideBar :open="open" :headerHeight="headerHeight" />

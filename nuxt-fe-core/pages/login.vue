@@ -4,7 +4,7 @@ import * as z from "zod";
 import { useForm } from "vee-validate";
 import { useToast } from "@/components/ui/toast/use-toast";
 import { useUser } from "@/composables/use-user";
-import { login } from "@/services/auth-service";
+import { login } from "@/services/auth.service";
 import type LoginUserDto from "@/dto/LoginUserDto";
 import type { ApiErrorDto } from "@/dto/BaseResponseDto";
 

@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/services/auth-service";
+import { getAuthUser } from "@/services/auth.service";
 import { userStore } from "@/store/user.store";
 
 type TSetToken = {

@@ -25,18 +25,7 @@ namespace DuitKu.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Transaction>> GetAllTransactions()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-
-            return await _transactionService.GetAllTransactions(Guid.Parse(userId));
-        }
-
-        [HttpGet("with")]
         public async Task<ActionResult> GetAllTransactionsWith(
-            bool account,
-            bool category,
-            bool subcategory,
             [FromQuery] BaseParamFilterDto filterDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
@@ -44,9 +33,6 @@ namespace DuitKu.Controllers
 
             var transactions = await _transactionService.GetAllTransactionsWith(
                 Guid.Parse(userId),
-                account,
-                category,
-                subcategory,
                 filterDto
             );
 

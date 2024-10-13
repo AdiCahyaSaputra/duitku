@@ -1,12 +1,15 @@
 <template>
   <div class="text-left flex flex-col lg:border-l lg:border-t-none border-t">
     <div class="p-4">
-      <h2 class="text-sm font-bold text-black/60 flex justify-between items-center gap-2 w-full">
-        <span>Total Pengeluaran Oktober</span>
+      <div class="flex justify-between items-start gap-2 w-full">
+        <div>
+          <h2 class="text-base font-bold text-black">Total Pengeluaran Oktober</h2>
+          <p class="text-sm text-gray-600">01 Oktober - 31 Oktober</p>
+        </div>
         <Button variant="outline" size="icon">
           <Icon name="lucide:calendar-range" class="w-4 h-4" />
         </Button>
-      </h2>
+      </div>
       <h1 class="text-lg font-bold mt-2">Rp. 100.000</h1>
     </div>
 

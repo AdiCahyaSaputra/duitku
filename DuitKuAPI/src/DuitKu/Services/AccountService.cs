@@ -1,16 +1,19 @@
 using DuitKu.Persistance.Repository;
 using DuitKu.Domain;
 using DuitKu.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace DuitKu.Services
 {
     public class AccountService
     {
         private readonly AccountRepository _accountRepository;
+        private readonly QueryService<Account> _queryService;
 
-        public AccountService(AccountRepository repository)
+        public AccountService(AccountRepository repository, QueryService<Account> queryService)
         {
             _accountRepository = repository;
+            _queryService = queryService;
         }
 
         public async Task<int> GetTotalRecord(Guid userId)
@@ -20,9 +23,18 @@ namespace DuitKu.Services
 
         public async Task<IEnumerable<Account>> GetAllAccount(Guid userId, BaseParamFilterDto filterDto)
         {
-            var accounts = await _accountRepository.GetAllAsync(userId, filterDto);
+            var query = _accountRepository.GetEntities()
+                .AsNoTracking()
+                .Where(account => account.UserId == userId);
 
-            return accounts;
+            query = _queryService.PaginateWithSearchFilter(query, filterDto, (query, searchString) =>
+            {
+                string lowerCaseSearchString = searchString.ToLower();
+
+                query.Where(account => EF.Functions.Like(account.Name.ToLower(), $"%{lowerCaseSearchString}%"));
+            });
+
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<AccountWithTransactionsDto>> GetAllAccountWithTransactions(Guid userId)

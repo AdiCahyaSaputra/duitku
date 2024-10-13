@@ -1,4 +1,4 @@
-export default interface TransactionWithRelation {
+export default interface TransactionWithRelationDto {
   id: string;
   description: string;
   amount: number;

@@ -9,13 +9,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { transformDotNetTimestamp } from "@/lib/helper";
-import { getTransactions } from "@/services/transaction-service";
+import { getTransactions } from "@/services/transaction.service";
 
 const pageNumber = ref(1);
 
 const { data, isLoading } = useQuery({
   queryKey: ["get_transactions", pageNumber],
-  queryFn: async () => await getTransactions(pageNumber.value),
+  queryFn: async () =>
+    await getTransactions({
+      paginate: true,
+      pageNumber: pageNumber.value,
+      limit: 10,
+    }),
 });
 </script>
 
@@ -34,24 +39,23 @@ const { data, isLoading } = useQuery({
                   <Badge v-show="transaction.subCategory" variant="secondary" class="px-2 w-max bg-emerald-500/20">{{
                     transaction.subCategory?.name }}</Badge>
                 </CardDescription>
-                <CardTitle class="leading-5">{{
-                  transaction.description
-                }}</CardTitle>
+                <CardContent class="leading-5 px-0 font-medium">{{ transaction.description }}</CardContent>
               </CardHeader>
-              <CardContent class="font-bold text-right py-0">Rp. {{ transaction.amount }}</CardContent>
-              <CardFooter class="flex flex-col items-end gap-2 mt-4">
-                <div class="text-sm text-gray-700 flex justify-between items-center w-full">
-                  <span>{{
-                    transformDotNetTimestamp(transaction.date)[0]
-                  }}</span>
-                  <span>{{
-                    transformDotNetTimestamp(transaction.date)[1]
-                  }}</span>
+              <CardFooter class="flex flex-col items-end gap-4 mt-8">
+                <div class="flex items-end justify-between gap-2 w-full">
+                  <div>
+                    <p class="text-xs mb-1">{{ transformDotNetTimestamp(transaction.date).join(', ') }}</p>
+                    <div class="flex items-center gap-2">
+                      <Icon name="lucide:wallet-minimal" class="w-4 h-4"/>
+                      <p class="text-sm font-semibold">{{ transaction.account.name }}</p>
+                    </div>
+
+                    <p class="mt-3 font-bold text-emerald-600 text-lg">Rp. {{ transaction.amount }}</p>
+                  </div>
+                  <Button class="w-max" size="sm">
+                    <Icon name="lucide:arrow-up-right" class="w-4 h-4" />
+                  </Button>
                 </div>
-                <Button class="flex items-center justify-between gap-2 w-full" size="sm">
-                  <span>{{ transaction.account.name }}</span>
-                  <Icon name="lucide:arrow-up-right" class="w-4 h-4" />
-                </Button>
               </CardFooter>
             </Card>
 

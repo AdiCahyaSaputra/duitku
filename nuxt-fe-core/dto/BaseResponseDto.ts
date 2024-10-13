@@ -1,6 +1,11 @@
 export interface BaseResponseDto {
   message: "Ada yang salah dari sisi server wkwkwk" | string;
-  data: any;
+  [key: string]: any;
+}
+
+export interface BaseResponseFilterDto {
+  isPreviousExists: boolean;
+  isNextExists: boolean;
 }
 
 export interface ApiErrorDto {

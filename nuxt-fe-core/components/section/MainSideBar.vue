@@ -9,11 +9,6 @@ const navbarItems = {
     {
       url: "/beranda",
       label: "Beranda",
-      iconName: "lucide:layout-dashboard",
-    },
-    {
-      url: "/transaksi",
-      label: "Transaksi",
       iconName: "lucide:wallet",
     },
   ],

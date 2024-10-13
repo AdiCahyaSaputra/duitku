@@ -3,7 +3,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
 import { useMutation } from "@tanstack/vue-query";
-import { registerUser } from "@/services/auth-service";
+import { registerUser } from "@/services/auth.service";
 import type RegisterUserDto from "@/dto/RegisterUserDto";
 import { useToast } from "@/components/ui/toast/use-toast";
 
