@@ -22,6 +22,7 @@ const props = defineProps<{
     label: string;
   }[];
   name: string;
+  isLoading: boolean;
 }>();
 
 const open = ref(false);
@@ -47,7 +48,7 @@ const handleSelect = (value: string) => {
     <PopoverContent class="w-full p-0" align="start">
       <Command>
         <CommandInput :placeholder="'Cari ' + props.name" />
-        <CommandEmpty>{{ props.name }} nggak ketemu 🥲</CommandEmpty>
+        <CommandEmpty>{{ props.isLoading ? "Lagi di cari.." : props.name + " nggak ketemu 🥲" }}</CommandEmpty>
         <CommandList>
           <CommandGroup>
             <CommandItem v-for="(item, idx) in props.items" :key="idx" :value="item.value" @select="() => handleSelect(item.value)">

@@ -1,23 +1,23 @@
 import { authHeaderAPI } from "@/constant/api";
-import type AccountDto from "@/dto/AccountDto";
 import type BaseParamFilterDto from "@/dto/BaseParamFilterDto";
 import type { BaseResponseFilterDto } from "@/dto/BaseResponseDto";
+import type CategoryDto from "@/dto/CategoryDto";
 import { createQueryStringParams } from "@/lib/helper";
 
-type TGetAkunFilterResponse = BaseResponseFilterDto & {
-  accounts: AccountDto[];
-};
+type TGetCategoryFilterResponse = BaseResponseFilterDto & {
+  categories: CategoryDto[];
+}
 
-export const getAccounts = async (
+export const getCategories = async (
   params: BaseParamFilterDto,
-): Promise<TGetAkunFilterResponse | null> => {
+): Promise<TGetCategoryFilterResponse | null> => {
   const { getToken } = useUser();
   const token = await getToken();
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<TGetAkunFilterResponse>(
-    `/duit-ku/api/accounts?${createQueryStringParams(params)}`,
+  const { data, error } = await useFetch<TGetCategoryFilterResponse>(
+    `/duit-ku/api/categories?${createQueryStringParams(params)}`,
     {
       headers: authHeaderAPI(token),
     },

@@ -14,23 +14,19 @@ import PopoverContent from "@/components/ui/popover/PopoverContent.vue";
 import PopoverTrigger from "@/components/ui/popover/PopoverTrigger.vue";
 import { useToast } from "@/components/ui/toast";
 import type { ApiErrorDto } from "@/dto/BaseResponseDto";
-import { toComboboxCommandListFriendly } from "@/lib/helper";
+import { castStringDateIntoDotNetDate, toComboboxCommandListFriendly } from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { getAccounts } from "@/services/akun.service";
+import { getCategories } from "@/services/category.service";
+import { getSubCategories } from "@/services/sub-category.service";
 import { createTransaction } from "@/services/transaction.service";
 import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { toTypedSchema } from "@vee-validate/zod";
+import { isModifier } from "typescript";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 
-const frameworks = ref([
-  { value: "next.js", label: "Next.js" },
-  { value: "sveltekit", label: "SvelteKit" },
-  { value: "nuxt", label: "Nuxt" },
-  { value: "remix", label: "Remix" },
-  { value: "astro", label: "Astro" },
-]);
-
+const isModalOpen = ref(false);
 const datePlaceholder = ref();
 const dateValue = computed({
   get: () => (form.values.date ? parseDate(form.values.date) : undefined),
@@ -66,21 +62,41 @@ const form = useForm({
 });
 
 const { toast } = useToast();
+const queryClient = useQueryClient();
 
-const { data: accountsResponse } = useQuery({
+const { data: accountsResponse, isLoading: accountsFetchLoading } = useQuery({
   queryKey: ["get_accounts"],
   queryFn: () => getAccounts({ paginate: false, limit: -1 }),
 });
 
+const { data: categoriesResponse, isLoading: categoriesFetchLoading } = useQuery({
+  queryKey: ["get_categories"],
+  queryFn: () => getCategories({ paginate: false, limit: -1 }),
+});
+
+const { data: subCategoriesResponse, isLoading: subCategoriesFetchLoading } = useQuery({
+  queryKey: ["get_sub_categories", form.values.categoryId],
+  queryFn: () => getSubCategories({ paginate: false, limit: -1, categoryId: form.values.categoryId || '' }),
+  enabled: computed(() => !!form.values.categoryId)
+});
+
 const { isPending, mutate: createTransactionMutate } = useMutation({
+  mutationKey: ['create_transaction'],
   mutationFn: createTransaction,
-  onSuccess: (res: any) => {
+  onSuccess: (res) => {
+    queryClient.invalidateQueries({ queryKey: ['get_transactions'], exact: false });
+
+    form.resetForm();
+    isModalOpen.value = false;
+
     toast({
       title: "Bisa nih 👌",
       description: res.message,
     });
   },
   onError: (err: ApiErrorDto) => {
+    isModalOpen.value = false;
+
     toast({
       title: "Waduh ada error",
       description: err.title,
@@ -89,12 +105,14 @@ const { isPending, mutate: createTransactionMutate } = useMutation({
 });
 
 const onSubmit = form.handleSubmit((formData) => {
-  console.log(formData);
+  formData.date = castStringDateIntoDotNetDate(formData.date);
+
+  createTransactionMutate(formData);
 });
 </script>
 
 <template>
-  <Dialog>
+  <Dialog v-model:open="isModalOpen">
     <DialogTrigger asChild>
       <Button class="w-full md:flex hidden items-center justify-between">
         <Icon name="lucide:circle-fading-plus" class="w-4 h-4" />
@@ -125,23 +143,38 @@ const onSubmit = form.handleSubmit((formData) => {
             @update-value="
               (selectedValue) => form.setFieldValue('accountId', selectedValue)
             "
+            :is-loading="accountsFetchLoading"
           />
 
           <ReusableGlobalSelectCombobox
-            :items="frameworks"
+            :items="
+              toComboboxCommandListFriendly(
+                categoriesResponse?.categories ?? [],
+                'id',
+                'name',
+              )
+            "
             name="Kategori"
             @update-value="
               (selectedValue) => form.setFieldValue('categoryId', selectedValue)
             "
+            :is-loading="categoriesFetchLoading"
           />
 
           <ReusableGlobalSelectCombobox
-            :items="frameworks"
+            :items="
+              toComboboxCommandListFriendly(
+                subCategoriesResponse?.subCategories ?? [],
+                'id',
+                'name',
+              )
+            "
             name="Sub Kategori"
             @update-value="
               (selectedValue) =>
                 form.setFieldValue('subCategoryId', selectedValue)
             "
+            :is-loading="subCategoriesFetchLoading"
           />
         </div>
 
@@ -178,7 +211,7 @@ const onSubmit = form.handleSubmit((formData) => {
                       }}</span>
                       <Icon name="lucide:calendar" class="ms-auto h-4 w-4" />
                     </Button>
-                    <input hidden />
+                    <input v-bind="componentField" hidden />
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent class="w-auto p-0">
