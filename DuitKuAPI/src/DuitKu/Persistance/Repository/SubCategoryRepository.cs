@@ -7,15 +7,24 @@ namespace DuitKu.Persistance.Repository
     public class SubCategoryRepository
     {
         private readonly ApplicationDBContext _context;
-        // private readonly ILogger<CategoryRepository> _logger;
 
         public SubCategoryRepository(
             ApplicationDBContext context
-        // ILogger<AccountRepository> logger
         )
         {
             _context = context;
-            // _logger = logger;
+        }
+
+        public IQueryable<SubCategory> GetEntities() 
+        {
+            return _context.SubCategory;
+        }
+
+        public async Task<int> GetTotalRecord(Guid userId)
+        {
+            return await _context.SubCategory
+                .Where(subCategory => subCategory.UserId == userId)
+                .CountAsync();
         }
 
         public async Task<IEnumerable<SubCategory>> GetAllAsync(Guid userId)

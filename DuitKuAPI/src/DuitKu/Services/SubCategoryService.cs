@@ -1,24 +1,42 @@
 using DuitKu.Persistance.Repository;
-using DuitKu.Persistance.Database;
 using DuitKu.Domain;
 using DuitKu.DTOs;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace DuitKu.Services
 {
     public class SubCategoryService
     {
         private readonly SubCategoryRepository _subCategoryRepository;
+        private readonly QueryService<SubCategory> _queryService;
 
-        public SubCategoryService(SubCategoryRepository repository)
+        public SubCategoryService(SubCategoryRepository repository, QueryService<SubCategory> queryService)
         {
             _subCategoryRepository = repository;
+            _queryService = queryService;
         }
 
-        public async Task<IEnumerable<SubCategory>> GetAllSubCategories(Guid userId)
+        public async Task<int> GetTotalRecord(Guid userId)
         {
-            var subCategories = await _subCategoryRepository.GetAllAsync(userId);
+            return await _subCategoryRepository.GetTotalRecord(userId);
+        }
 
-            return subCategories;
+        public async Task<IEnumerable<SubCategory>> GetAllSubCategories(Guid userId, GetAllSubCategoriesFilterDto filterDto)
+        {
+            var query = _subCategoryRepository.GetEntities()
+                .AsNoTracking()
+                .Where(subCategory => subCategory.UserId == userId)
+                .Where(subCategory => subCategory.CategoryId == filterDto.CategoryId);
+
+            query = _queryService.PaginateWithSearchFilter(query, filterDto, (query, searchString) =>
+            {
+                string lowerCaseSearchString = searchString.ToLower();
+
+                return query.Where(subCategory => EF.Functions.Like(subCategory.Name.ToLower(), $"%{lowerCaseSearchString}%"));
+            });
+
+            return await query.ToListAsync();
         }
 
         public async Task<SubCategory> GetById(Guid subCategoryId, Guid userId)

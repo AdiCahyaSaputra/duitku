@@ -14,20 +14,31 @@ namespace DuitKu.Controllers
     public class SubCategoryController : ControllerBase
     {
         private readonly SubCategoryService _subCategoryService;
-        private readonly ILogger<SubCategoryController> _logger;
+        private readonly HelperService _helperService;
 
-        public SubCategoryController(SubCategoryService subCategoryService, ILogger<SubCategoryController> logger)
+        public SubCategoryController(SubCategoryService subCategoryService, HelperService helperService)
         {
             _subCategoryService = subCategoryService;
-            _logger = logger;
+            _helperService = helperService;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<SubCategory>> GetAllSubCategories()
+        public async Task<ActionResult> GetAllSubCategories(
+            [FromQuery] GetAllSubCategoriesFilterDto filterDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var totalSubCategoriesRecord = await _subCategoryService.GetTotalRecord(Guid.Parse(userId));
 
-            return await _subCategoryService.GetAllSubCategories(Guid.Parse(userId));
+            var subCategories = await _subCategoryService.GetAllSubCategories(Guid.Parse(userId), filterDto);
+
+            var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit, totalSubCategoriesRecord);
+
+            return Ok(new
+            {
+                filterResponseApi.isNextExists,   
+                filterResponseApi.isPreviousExists,   
+                subCategories
+            });
         }
 
         [HttpGet("{subCategoryId:guid}")]
@@ -46,8 +57,6 @@ namespace DuitKu.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            _logger.LogInformation("Data nya masuk");
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
