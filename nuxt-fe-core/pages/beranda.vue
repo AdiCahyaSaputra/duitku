@@ -33,7 +33,7 @@ headerStore().$subscribe((_, state) => {
         </Button>
       </div>
       <div class="flex items-center gap-2">
-        <SectionBerandaFormCreateTransaksi />
+        <ReusableBerandaFormDialog />
         <Button variant="outline" size="icon">
           <Icon name="lucide:filter" />
         </Button>

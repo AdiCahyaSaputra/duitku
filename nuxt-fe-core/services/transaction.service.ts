@@ -16,6 +16,8 @@ type TGetTransactionFilterResponse = BaseResponseFilterDto & {
 export const getTransactions = async (
   param: BaseParamFilterDto,
 ): Promise<TGetTransactionFilterResponse | null> => {
+  console.log('Get transaction');
+
   const { getToken } = useUser();
 
   const token = await getToken();

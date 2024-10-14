@@ -7,9 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration["ConnectionStrings:DefaultConnection"] = builder.Configuration["DB"]; 
 builder.Configuration["Jwt:Key"] = builder.Configuration["JWT_KEY"]; 
 
-System.Console.WriteLine(builder.Configuration["ConnectionStrings:DefaultConnection"]);
-System.Console.WriteLine(builder.Configuration["Jwt:Key"]);
-
 var SecretKey = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
 
 builder.Services
