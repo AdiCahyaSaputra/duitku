@@ -48,28 +48,38 @@ const form = useForm({
 const { toast } = useToast();
 const queryClient = useQueryClient();
 
-const { data: accountsResponse, isLoading: accountsFetchLoading } = useQuery({
+const { 
+  data: accountsResponse, 
+  isLoading: accountsFetchLoading 
+} = useQuery({
   queryKey: ["get_accounts"],
   queryFn: () => getAccounts({ paginate: false, limit: -1 }),
+  refetchOnMount: 'always'
 });
 
-const { data: categoriesResponse, isLoading: categoriesFetchLoading } =
-  useQuery({
-    queryKey: ["get_categories"],
-    queryFn: () => getCategories({ paginate: false, limit: -1 }),
-  });
+const { 
+  data: categoriesResponse, 
+  isLoading: categoriesFetchLoading 
+} = useQuery({
+  queryKey: ["get_categories"],
+  queryFn: () => getCategories({ paginate: false, limit: -1 }),
+  refetchOnMount: 'always'
+});
 
-const { data: subCategoriesResponse, isLoading: subCategoriesFetchLoading } =
-  useQuery({
-    queryKey: ["get_sub_categories", form.values.categoryId],
-    queryFn: () =>
-      getSubCategories({
-        paginate: false,
-        limit: -1,
-        categoryId: form.values.categoryId || "",
-      }),
-    enabled: computed(() => !!form.values.categoryId),
-  });
+const { 
+  data: subCategoriesResponse, 
+  isLoading: subCategoriesFetchLoading 
+} = useQuery({
+  queryKey: ["get_sub_categories", form.values.categoryId],
+  queryFn: () =>
+    getSubCategories({
+      paginate: false,
+      limit: -1,
+      categoryId: form.values.categoryId || "",
+    }),
+  enabled: computed(() => !!form.values.categoryId),
+  refetchOnMount: 'always'
+});
 
 const { isPending, mutate: createTransactionMutate } = useMutation({
   mutationKey: ["create_transaction"],
@@ -100,8 +110,6 @@ const { isPending, mutate: createTransactionMutate } = useMutation({
 });
 
 const onSubmit = form.handleSubmit((formData) => {
-  console.log(formData);
-
   formData.date = castStringDateIntoDotNetDate(formData.date);
   
   createTransactionMutate(formData);

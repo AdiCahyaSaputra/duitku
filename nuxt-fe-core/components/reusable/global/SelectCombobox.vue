@@ -13,7 +13,9 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-const emit = defineEmits(["updateValue"]);
+const emit = defineEmits<{
+  (e: 'updateValue', selectedValue: string): void
+}>();
 
 const props = defineProps<{
   items: {
@@ -22,10 +24,11 @@ const props = defineProps<{
   }[];
   name: string;
   isLoading: boolean;
+  defaultSelectedValue?: string;
 }>();
 
 const open = ref(false);
-const selectedValue = ref("");
+const selectedValue = ref(props.defaultSelectedValue);
 
 const handleSelect = (value: string) => {
   open.value = false;
@@ -33,6 +36,11 @@ const handleSelect = (value: string) => {
 
   emit('updateValue', selectedValue.value);
 }
+
+watch(() => selectedValue.value, (newSelectedValue) => {
+  console.log(newSelectedValue);
+})
+
 </script>
 
 <template>
@@ -50,10 +58,18 @@ const handleSelect = (value: string) => {
         <CommandEmpty>{{ props.isLoading ? "Lagi di cari.." : props.name + " nggak ketemu 🥲" }}</CommandEmpty>
         <CommandList>
           <CommandGroup>
-            <CommandItem v-for="(item, idx) in props.items" :key="idx" :value="item.value" @select="() => handleSelect(item.value)">
+            <CommandItem 
+              v-for="(item, idx) in props.items" 
+              :key="idx" 
+              :value="item.value" 
+              @select="() => handleSelect(item.value)"
+            >
               {{ item.label }}
             </CommandItem>
           </CommandGroup>
+          <Button variant="secondary" class="w-full" @click="() => handleSelect('')">
+            Kosongin
+          </Button>
         </CommandList>
       </Command>
     </PopoverContent>

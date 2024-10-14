@@ -6,6 +6,7 @@ import type {
   BaseResponseFilterDto,
 } from "@/dto/BaseResponseDto";
 import type CreateTransactionDto from "@/dto/CreateTransactionDto";
+import type FilterTransactionDto from "@/dto/FilterTransactionDto";
 import type TransactionWithRelationDto from "@/dto/TransactionWithRelationDto";
 import { createQueryStringParams } from "@/lib/helper";
 
@@ -14,9 +15,9 @@ type TGetTransactionFilterResponse = BaseResponseFilterDto & {
 };
 
 export const getTransactions = async (
-  param: BaseParamFilterDto,
+  param: BaseParamFilterDto & FilterTransactionDto,
 ): Promise<TGetTransactionFilterResponse | null> => {
-  console.log('Get transaction');
+  console.log('filter berubah, jalan lagi ', param);
 
   const { getToken } = useUser();
 

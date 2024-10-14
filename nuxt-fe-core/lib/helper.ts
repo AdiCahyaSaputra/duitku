@@ -55,3 +55,11 @@ export const toComboboxCommandListFriendly = <T>(
     label: item[labelKey] as string,
   }));
 };
+
+export const toIDR = (price: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    currencySign: 'accounting'
+  }).format(price);
+}
