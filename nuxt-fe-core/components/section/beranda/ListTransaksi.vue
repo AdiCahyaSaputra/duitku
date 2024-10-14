@@ -12,7 +12,7 @@ import { getTransactions } from "@/services/transaction.service";
 
 const pageNumber = ref(1);
 
-const { data, isLoading, isError } = useQuery({
+const { data, isLoading } = useQuery({
   queryKey: ["get_transactions", pageNumber],
   queryFn: async () =>
     await getTransactions({
@@ -20,6 +20,7 @@ const { data, isLoading, isError } = useQuery({
       pageNumber: pageNumber.value,
       limit: 10,
     }),
+  refetchOnMount: 'always'
 });
 </script>
 
@@ -61,19 +62,19 @@ const { data, isLoading, isError } = useQuery({
                       Rp. {{ transaction.amount }}
                     </p>
                   </div>
-                  <Button class="w-max" size="sm">
-                    <Icon name="lucide:arrow-up-right" class="w-4 h-4" />
-                  </Button>
+                  <ReusableBerandaFormDeleteDialog 
+                    :id="transaction.id"
+                  />
                 </div>
               </CardFooter>
             </Card>
           </div>
 
           <div class="mt-4 space-x-2">
-            <Button variant="outline" size="icon" :disabled="!data?.isPreviousExists">
+            <Button variant="outline" size="icon" @click="pageNumber = pageNumber - 1" :disabled="!data?.isPreviousExists">
               <Icon name="lucide:chevron-left" />
             </Button>
-            <Button variant="outline" size="icon" :disabled="!data?.isNextExists">
+            <Button variant="outline" size="icon" @click="pageNumber = pageNumber + 1" :disabled="!data?.isNextExists">
               <Icon name="lucide:chevron-right" />
             </Button>
           </div>

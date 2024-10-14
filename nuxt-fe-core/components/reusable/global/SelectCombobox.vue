@@ -12,7 +12,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { cn } from "@/lib/utils";
 
 const emit = defineEmits(["updateValue"]);
 
@@ -52,11 +51,6 @@ const handleSelect = (value: string) => {
         <CommandList>
           <CommandGroup>
             <CommandItem v-for="(item, idx) in props.items" :key="idx" :value="item.value" @select="() => handleSelect(item.value)">
-              <Icon name="lucide:check" :class="cn(
-                'mr-2 h-4 w-4',
-                selectedValue === item.value ? 'opacity-100' : 'opacity-0',
-              )
-                " />
               {{ item.label }}
             </CommandItem>
           </CommandGroup>

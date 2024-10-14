@@ -26,12 +26,14 @@ const isModalOpen = ref(false);
     </DialogTrigger>
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Bikin Transaksi Baru</DialogTitle>
+        <DialogTitle class="flex items-center gap-2">
+          <Icon name="lucide:notebook-pen" class="w-5 h-5" />
+          <span>Buat Transaksi</span>
+        </DialogTitle>
+        <DialogDescription class="text-left">Catet transaksi disini bre</DialogDescription>
       </DialogHeader>
 
-      <FormTransaction
-        @create-mutate-executed="() => isModalOpen = false"
-      />
+      <FormTransaction @create-mutate-executed="() => (isModalOpen = false)" />
     </DialogContent>
   </Dialog>
 </template>

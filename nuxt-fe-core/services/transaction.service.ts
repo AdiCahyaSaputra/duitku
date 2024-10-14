@@ -63,3 +63,27 @@ export const createTransaction = async (formData: CreateTransactionDto) => {
 
   return data.value as BaseResponseDto;
 };
+
+export const deleteTransaction = async (id: string) => {
+  const { getToken } = useUser();
+  const token = await getToken();
+
+  if (!token) {
+    throw {
+      title: "Login dulu bre..",
+      status: 401,
+      traceId: "",
+    } as ApiErrorDto;
+  }
+
+  const { data, error } = await useFetch(`/duit-ku/api/transactions/${id}`, {
+    headers: authHeaderAPI(token),
+    method: "DELETE",
+  });
+
+  if (error.value) {
+    throw error.value.data as ApiErrorDto;
+  }
+
+  return data.value as BaseResponseDto;
+}

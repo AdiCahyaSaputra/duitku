@@ -24,10 +24,10 @@ headerStore().$subscribe((_, state) => {
     </div>
 
     <div
-      class="flex justify-between gap-2 p-4 sticky bg-white supports-[backdrop-filter]:bg-white/60 border-b supports-[backdrop-filter]:backdrop-blur-md"
+      class="flex justify-between gap-2 p-4 sticky bg-white supports-[backdrop-filter]:bg-white/60 border-b supports-[backdrop-filter]:backdrop-blur-md z-20"
       :style="{ top: `${headerHeight}px` }">
       <div class="flex w-full md:max-w-sm items-center gap-1.5 relative">
-        <Input type="text" placeholder="Cari" class="w-full" />
+        <Input type="text" placeholder="Cari" class="w-full bg-white" />
         <Button class="absolute right-0 rounded-l-none" size="icon">
           <Icon name="lucide:search" />
         </Button>

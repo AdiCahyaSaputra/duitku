@@ -26,7 +26,7 @@ const formSchema = toTypedSchema(
       message: "Kategori harus di isi",
       required_error: "Kategori harus di isi",
     }),
-    subCategoryId: z.string().nullable(),
+    subCategoryId: z.string().nullable().default(null),
     date: z.string({ message: "Tanggal harus di isi" }),
     description: z
       .string({ message: "Deskripsi harus di isi" })
@@ -100,10 +100,13 @@ const { isPending, mutate: createTransactionMutate } = useMutation({
 });
 
 const onSubmit = form.handleSubmit((formData) => {
-  formData.date = castStringDateIntoDotNetDate(formData.date);
+  console.log(formData);
 
+  formData.date = castStringDateIntoDotNetDate(formData.date);
+  
   createTransactionMutate(formData);
 });
+
 </script>
 <template>
   <form @submit="onSubmit" class="mt-4">
