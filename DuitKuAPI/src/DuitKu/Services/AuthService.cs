@@ -5,18 +5,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DuitKu.Services
 {
-    public class AuthService
+    public class AuthService(ApplicationDBContext context, JwtService jwtService)
     {
-        private readonly ApplicationDBContext _context;
-        private readonly JwtService _jwtService;
-        private readonly PasswordHasher<User> _passwordHasher;
-
-        public AuthService(ApplicationDBContext context, JwtService jwtService)
-        {
-            _context = context;
-            _jwtService = jwtService;
-            _passwordHasher = new PasswordHasher<User>();
-        }
+        private readonly ApplicationDBContext _context = context;
+        private readonly JwtService _jwtService = jwtService;
+        private readonly PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
 
         public async Task<string> Register(RegisterDto dto)
         {

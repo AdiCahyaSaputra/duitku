@@ -10,18 +10,12 @@ namespace DuitKu.Controllers
     [Authorize]
     [ApiController]
     [Route("api/accounts")]
-    public class AccountController : ControllerBase
+    public class AccountController(
+        AccountService accountService,
+        HelperService helperService) : ControllerBase
     {
-        private readonly AccountService _accountService;
-        private readonly HelperService _helperService;
-
-        public AccountController(
-            AccountService accountService,
-            HelperService helperService)
-        {
-            _accountService = accountService;
-            _helperService = helperService;
-        }
+        private readonly AccountService _accountService = accountService;
+        private readonly HelperService _helperService = helperService;
 
         [HttpGet]
         public async Task<ActionResult> GetAllAccount(

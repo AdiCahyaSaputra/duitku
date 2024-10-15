@@ -5,16 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DuitKu.Services
 {
-    public class AccountService
+    public class AccountService(AccountRepository repository, QueryService<Account> queryService)
     {
-        private readonly AccountRepository _accountRepository;
-        private readonly QueryService<Account> _queryService;
-
-        public AccountService(AccountRepository repository, QueryService<Account> queryService)
-        {
-            _accountRepository = repository;
-            _queryService = queryService;
-        }
+        private readonly AccountRepository _accountRepository = repository;
+        private readonly QueryService<Account> _queryService = queryService;
 
         public async Task<int> GetTotalRecord(Guid userId)
         {

@@ -6,7 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
+} from '@/components/ui/sheet';
 import { castStringDateIntoDotNetDate, toComboboxCommandListFriendly } from "@/lib/helper";
 import { getAccounts } from "@/services/akun.service";
 import { getCategories } from "@/services/category.service";
@@ -19,6 +19,8 @@ const categoryIdRef = ref<string | undefined>(undefined);
 const subCategoryIdRef = ref<string | undefined>(undefined);
 const dateStartRef = ref<string | undefined>(undefined);
 const dateEndRef = ref<string | undefined>(undefined);
+
+const isSheetOpen = ref(false);
 
 const { setFilter } = filterTransactionStore();
 
@@ -56,6 +58,8 @@ const handleApplyFilter = () => {
     dateStart: dateStartRef.value,
     dateEnd: dateEndRef.value
   });
+
+  isSheetOpen.value = false;
 }
 
 filterTransactionStore().$subscribe((_, state) => {
@@ -68,7 +72,7 @@ filterTransactionStore().$subscribe((_, state) => {
 </script>
 
 <template>
-  <Sheet>
+  <Sheet v-model:open="isSheetOpen">
     <SheetTrigger asChild>
       <Button variant="outline" size="icon">
         <Icon name="lucide:filter" />
@@ -76,8 +80,8 @@ filterTransactionStore().$subscribe((_, state) => {
     </SheetTrigger>
     <SheetContent>
       <SheetHeader>
-        <SheetTitle>Filter Transaksi</SheetTitle>
-        <SheetDescription>Data yang tampil masih bisa di filter disini bre, jadi jangan manual cari data nya</SheetDescription>
+        <SheetTitle class="text-left">Filter Transaksi</SheetTitle>
+        <SheetDescription class="text-left">Data yang tampil masih bisa di filter disini bre, jadi jangan manual cari data nya</SheetDescription>
       </SheetHeader>
 
       <div class="space-y-2 mt-4">

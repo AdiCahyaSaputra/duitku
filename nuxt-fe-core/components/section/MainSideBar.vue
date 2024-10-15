@@ -36,7 +36,7 @@ const navbarItems = {
 
 <template>
   <aside
-    class="lg:pl-[2rem] lg:border-r lg:pr-4 py-4 flex flex-col justify-between lg:w-1/5 lg:sticky lg:px-0 lg:z-10 px-4 bg-secondary lg:bg-transparent lg:translate-y-0 transition-transform fixed inset-0 z-20"
+    class="lg:pl-[2rem] lg:border-r lg:pr-4 py-4 flex flex-col justify-between lg:w-1/5 lg:sticky lg:px-0 lg:z-10 px-4 bg-secondary lg:bg-transparent lg:translate-y-0 transition-transform fixed inset-0 z-30"
     :class="open ? 'translate-y-0' : '-translate-y-[200%]'"
     :style="{ 
       top: `${props.headerHeight}px`,

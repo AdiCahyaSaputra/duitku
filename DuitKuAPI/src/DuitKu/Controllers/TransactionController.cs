@@ -11,22 +11,16 @@ namespace DuitKu.Controllers
     [Authorize]
     [ApiController]
     [Route("api/transactions")]
-    public class TransactionController : ControllerBase
+    public class TransactionController(
+        TransactionService transactionService,
+        HelperService helperService) : ControllerBase
     {
-        private readonly TransactionService _transactionService;
-        private readonly HelperService _helperService;
-
-        public TransactionController(
-            TransactionService transactionService,
-            HelperService helperService)
-        {
-            _transactionService = transactionService;
-            _helperService = helperService;
-        }
+        private readonly TransactionService _transactionService = transactionService;
+        private readonly HelperService _helperService = helperService;
 
         [HttpGet]
         public async Task<ActionResult> GetAllTransactionsWith(
-            [FromQuery] BaseParamFilterDto filterDto)
+            [FromQuery] FilterTransactionDto filterDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             var totalTransactionsRecord = await _transactionService.GetTotalRecord(Guid.Parse(userId));

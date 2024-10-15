@@ -5,14 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DuitKu.Services
 {
-    public class JwtService
+    public class JwtService(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-
-        public JwtService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private readonly IConfiguration _configuration = configuration;
 
         public string GenerateToken(Guid UserId, string Email)
         {

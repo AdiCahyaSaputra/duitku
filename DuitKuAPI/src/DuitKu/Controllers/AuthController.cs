@@ -11,16 +11,10 @@ namespace DuitKu.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController(AuthService authService, ApplicationDBContext context) : ControllerBase
     {
-        private readonly AuthService _authService;
-        private readonly ApplicationDBContext _context;
-
-        public AuthController(AuthService authService, ApplicationDBContext context)
-        {
-            _authService = authService;
-            _context = context;
-        }
+        private readonly AuthService _authService = authService;
+        private readonly ApplicationDBContext _context = context;
 
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterDto dto)

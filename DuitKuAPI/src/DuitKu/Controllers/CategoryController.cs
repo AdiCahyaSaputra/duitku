@@ -11,16 +11,10 @@ namespace DuitKu.Controllers
     [Authorize]
     [ApiController]
     [Route("api/categories")]
-    public class CategoryController : ControllerBase
+    public class CategoryController(CategoryService categoryService, HelperService helperService) : ControllerBase
     {
-        private readonly CategoryService _categoryService;
-        private readonly HelperService _helperService;
-
-        public CategoryController(CategoryService categoryService, HelperService helperService)
-        {
-            _categoryService = categoryService;
-            _helperService = helperService;
-        }
+        private readonly CategoryService _categoryService = categoryService;
+        private readonly HelperService _helperService = helperService;
 
         [HttpGet]
         public async Task<ActionResult> GetAllCategories(

@@ -6,18 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DuitKu.Services
 {
-    public class TransactionService
+    public class TransactionService(
+        TransactionRepository repository,
+        QueryService<Transaction> queryService)
     {
-        private readonly TransactionRepository _transactionRepository;
-        private readonly QueryService<Transaction> _queryService;
-
-        public TransactionService(
-            TransactionRepository repository,
-            QueryService<Transaction> queryService)
-        {
-            _transactionRepository = repository;
-            _queryService = queryService;
-        }
+        private readonly TransactionRepository _transactionRepository = repository;
+        private readonly QueryService<Transaction> _queryService = queryService;
 
         public async Task<int> GetTotalRecord(Guid userId)
         {
@@ -26,20 +20,25 @@ namespace DuitKu.Services
 
         public async Task<IEnumerable<TransactionsWithRelation>> GetAllTransactionsWith(
             Guid userId,
-            BaseParamFilterDto filterDto)
+            FilterTransactionDto filterDto)
         {
             var query = _transactionRepository.GetEntities()
                 .AsNoTracking()
-                .Where(transaction => transaction.UserId == userId);
+                .Where(transaction => transaction.UserId == userId)
+                .Include("Account")
+                .Include("Category")
+                .Include("SubCategory");
 
-            query = _queryService.PaginateWithSearchFilter(query, filterDto, (query, searchString) =>
-            {
-                string lowerCaseSearchString = searchString.ToLower();
+            query = _queryService.PaginateWithSearchFilter(
+                query,
+                filterDto,
+                (query, searchString) => query.Where(transaction => EF.Functions.Like(transaction.Description.ToLower(), $"%{searchString.ToLower()}%")));
 
-                return query.Where(transaction => EF.Functions.Like(transaction.Description.ToLower(), $"%{lowerCaseSearchString}%"));
-            });
-
-            query = query.Include("Account").Include("Category").Include("SubCategory");
+            query = _queryService.When(query, filterDto.AccountId.HasValue, (query) => query.Where(transaction => transaction.AccountId == filterDto.AccountId));
+            query = _queryService.When(query, filterDto.CategoryId.HasValue, (query) => query.Where(transaction => transaction.CategoryId == filterDto.CategoryId));
+            query = _queryService.When(query, filterDto.SubCategoryId.HasValue, (query) => query.Where(transaction => transaction.SubCategoryId == filterDto.SubCategoryId));
+            query = _queryService.When(query, filterDto.DateStart.HasValue, (query) => query.Where(transaction => DateTime.Compare(transaction.Date.Date, ((DateTime)filterDto.DateStart!).Date) >= 0));
+            query = _queryService.When(query, filterDto.DateEnd.HasValue, (query) => query.Where(transaction => DateTime.Compare(transaction.Date.Date, ((DateTime)filterDto.DateEnd!).Date) <= 0));
 
             return await query
                 .Select(transaction => new TransactionsWithRelation

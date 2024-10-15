@@ -11,16 +11,10 @@ namespace DuitKu.Controllers
     [Authorize]
     [ApiController]
     [Route("api/sub-categories")]
-    public class SubCategoryController : ControllerBase
+    public class SubCategoryController(SubCategoryService subCategoryService, HelperService helperService) : ControllerBase
     {
-        private readonly SubCategoryService _subCategoryService;
-        private readonly HelperService _helperService;
-
-        public SubCategoryController(SubCategoryService subCategoryService, HelperService helperService)
-        {
-            _subCategoryService = subCategoryService;
-            _helperService = helperService;
-        }
+        private readonly SubCategoryService _subCategoryService = subCategoryService;
+        private readonly HelperService _helperService = helperService;
 
         [HttpGet]
         public async Task<ActionResult> GetAllSubCategories(
