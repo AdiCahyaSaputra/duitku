@@ -2,6 +2,8 @@ using DuitKu.Persistance.Repository;
 using DuitKu.Domain;
 using DuitKu.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DuitKu.Services
 {
@@ -29,6 +31,23 @@ namespace DuitKu.Services
             });
 
             return await query.ToListAsync();
+        }
+
+        public async Task<decimal> GetTotalAssetFromAccount(Guid userId, AccountTotalIncomeFilterDto totalIncomeFilterDto)
+        {
+            var query = _accountRepository.GetEntities()
+                .AsNoTracking()
+                .Where(account => account.UserId == userId);
+
+            query = _queryService.When(query, totalIncomeFilterDto.AccountId.HasValue, (query) => query.Where(account => account.Id == totalIncomeFilterDto.AccountId));
+
+            var accounts = await query.ToListAsync();
+
+            decimal totalAsset = 0;
+
+            accounts.ForEach(account => totalAsset += account.Balance);
+
+            return totalAsset;
         }
 
         public async Task<IEnumerable<AccountWithTransactionsDto>> GetAllAccountWithTransactions(Guid userId)

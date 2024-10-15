@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using DuitKu.Domain;
 using DuitKu.Persistance.Database;
+using DuitKu.DTOs;
 
 namespace DuitKu.Persistance.Repository
 {
@@ -15,7 +16,7 @@ namespace DuitKu.Persistance.Repository
             _context = context;
         }
 
-        public IQueryable<Transaction> GetEntities() 
+        public IQueryable<Transaction> GetEntities()
         {
             return _context.Transactions;
         }

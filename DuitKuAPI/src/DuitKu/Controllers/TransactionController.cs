@@ -18,15 +18,20 @@ namespace DuitKu.Controllers
         private readonly TransactionService _transactionService = transactionService;
         private readonly HelperService _helperService = helperService;
 
-        [HttpGet]
+        public Guid GetUserId()
+        {
+            return Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        }
+
+        [HttpGet()]
         public async Task<ActionResult> GetAllTransactionsWith(
             [FromQuery] FilterTransactionDto filterDto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            var totalTransactionsRecord = await _transactionService.GetTotalRecord(Guid.Parse(userId));
+            Guid userId = GetUserId();
+            var totalTransactionsRecord = await _transactionService.GetTotalRecord(userId);
 
             var transactions = await _transactionService.GetAllTransactionsWith(
-                Guid.Parse(userId),
+                userId,
                 filterDto
             );
 
@@ -40,11 +45,39 @@ namespace DuitKu.Controllers
             });
         }
 
+        [HttpGet("total-expense")]
+        public async Task<ActionResult> GetTotalExpense(
+            [FromQuery] TransactionExpenseFilterDto expenseFilterDto)
+        {
+            Guid userId = GetUserId();
+            decimal totalExpense = await _transactionService.GetTotalExpense(userId, expenseFilterDto);
+
+            return Ok(new
+            {
+                message = "Total pengeluaran kamu",
+                totalExpense
+            });
+        }
+
+        [HttpGet("top-three-expensive")]
+        public async Task<ActionResult> GetExpensiveTransaction(
+            [FromQuery] TransactionExpenseFilterDto expenseFilterDto
+        )
+        {
+            var transactions = await _transactionService.GetExpensiveTransaction(GetUserId(), expenseFilterDto);
+
+            return Ok(new
+            {
+                message = "Top 3 Transaksi yang bikin boros numeros wan...",
+                transactions
+            });
+        }
+
         [HttpGet("{transactionId:guid}")]
         public async Task<ActionResult<Transaction>> Show(Guid transactionId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            var transaction = await _transactionService.GetById(transactionId, Guid.Parse(userId));
+            Guid userId = GetUserId();
+            var transaction = await _transactionService.GetById(transactionId, userId);
 
             return Ok(transaction);
         }
@@ -57,9 +90,7 @@ namespace DuitKu.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-
-            dto.UserId = Guid.Parse(userId);
+            dto.UserId = GetUserId();
 
             var transaction = await _transactionService.CreateTransaction(dto);
 
@@ -74,8 +105,8 @@ namespace DuitKu.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            var transaction = await _transactionService.GetById(transactionId, Guid.Parse(userId));
+            Guid userId = GetUserId();
+            var transaction = await _transactionService.GetById(transactionId, userId);
 
             if (transaction == null)
             {
@@ -89,7 +120,7 @@ namespace DuitKu.Controllers
             transaction.CategoryId = dto.CategoryId;
             transaction.Description = dto.Description;
             transaction.Date = dto.Date ?? DateTime.UtcNow;
-            transaction.UserId = Guid.Parse(userId);
+            transaction.UserId = userId;
 
             await _transactionService.UpdateTransaction(transaction, oldAmount);
 
@@ -100,9 +131,7 @@ namespace DuitKu.Controllers
         [HttpDelete("{transactionId:guid}")]
         public async Task<IActionResult> Delete(Guid transactionId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-
-            await _transactionService.DeleteTransaction(transactionId, Guid.Parse(userId));
+            await _transactionService.DeleteTransaction(transactionId, GetUserId());
 
             return Ok(new { Message = "Ok Transaksi nya berhasil di hapus" });
         }

@@ -69,6 +69,52 @@ namespace DuitKu.Services
                 .ToListAsync();
         }
 
+        public async Task<decimal> GetTotalExpense(Guid userId, TransactionExpenseFilterDto expenseFilterDto)
+        {
+            var query = _transactionRepository.GetEntities()
+                .AsNoTracking()
+                .Where(transaction => transaction.UserId == userId);
+
+            query = _queryService.When(query, expenseFilterDto.AccountId.HasValue, (query) => query.Where(transaction => transaction.AccountId == expenseFilterDto.AccountId));
+            query = _queryService.When(query, expenseFilterDto.DateStart.HasValue, (query) => query.Where(transaction => DateTime.Compare(transaction.Date.Date, ((DateTime)expenseFilterDto.DateStart!).Date) >= 0));
+            query = _queryService.When(query, expenseFilterDto.DateEnd.HasValue, (query) => query.Where(transaction => DateTime.Compare(transaction.Date.Date, ((DateTime)expenseFilterDto.DateEnd!).Date) <= 0));
+
+            var transactions = await query.ToListAsync();
+            decimal totalExpense = 0;
+
+            transactions.ForEach(transaction => totalExpense += transaction.Amount);
+
+            return totalExpense;
+        }
+
+        public async Task<IEnumerable<MostExpensiveTransactionDto>> GetExpensiveTransaction(Guid userId, TransactionExpenseFilterDto expenseFilterDto)
+        {
+            var query = _transactionRepository.GetEntities()
+                .AsNoTracking()
+                .Where(transaction => transaction.UserId == userId)
+                .Include("Account");
+
+            query = _queryService.When(query, expenseFilterDto.DateStart.HasValue, (query) => query.Where(transaction => DateTime.Compare(transaction.Date.Date, ((DateTime)expenseFilterDto.DateStart!).Date) >= 0));
+            query = _queryService.When(query, expenseFilterDto.DateEnd.HasValue, (query) => query.Where(transaction => DateTime.Compare(transaction.Date.Date, ((DateTime)expenseFilterDto.DateEnd!).Date) <= 0));
+
+            return await query
+                .OrderByDescending(transaction => transaction.Amount)
+                .Take(3)
+                .Select(transaction => new MostExpensiveTransactionDto
+                {
+                    Id = transaction.Id,
+                    Account = new Account
+                    {
+                        Id = transaction.Account.Id,
+                        Name = transaction.Account.Name,
+                    },
+                    Amount = transaction.Amount,
+                    Description = transaction.Description,
+                    Date = transaction.Date,
+                })
+                .ToListAsync();
+        }
+
         public async Task<Transaction> GetById(Guid transactionId, Guid userId)
         {
             return await _transactionRepository.GetByIdAsync(transactionId, userId);

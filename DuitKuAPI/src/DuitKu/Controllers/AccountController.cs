@@ -17,14 +17,19 @@ namespace DuitKu.Controllers
         private readonly AccountService _accountService = accountService;
         private readonly HelperService _helperService = helperService;
 
+        public Guid GetUserId()
+        {
+            return Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        }
+
         [HttpGet]
         public async Task<ActionResult> GetAllAccount(
             [FromQuery] BaseParamFilterDto filterDto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            var totalAccountsRecord = await _accountService.GetTotalRecord(Guid.Parse(userId));
+            Guid userId = GetUserId();
+            var totalAccountsRecord = await _accountService.GetTotalRecord(userId);
 
-            var accounts = await _accountService.GetAllAccount(Guid.Parse(userId), filterDto);
+            var accounts = await _accountService.GetAllAccount(userId, filterDto);
 
             var filterResponseApi = _helperService.FilterResponseApi(filterDto.pageNumber ?? 1, filterDto.limit, totalAccountsRecord);
 
@@ -33,6 +38,19 @@ namespace DuitKu.Controllers
                 filterResponseApi.isNextExists,
                 filterResponseApi.isPreviousExists,
                 accounts
+            });
+        }
+
+        [HttpGet("total-asset")]
+        public async Task<ActionResult> GetTotalAssetFromAccount(
+            [FromQuery] AccountTotalIncomeFilterDto totalIncomeFilterDto)
+        {
+            decimal totalAsset = await _accountService.GetTotalAssetFromAccount(GetUserId(), totalIncomeFilterDto);
+
+            return Ok(new
+            {
+                message = "Total aset kamu",
+                totalAsset
             });
         }
 

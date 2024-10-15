@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
+using NuGet.Protocol;
+
 namespace DuitKu.Middleware
 {
     public class ErrorHandlingMiddleware
@@ -58,6 +60,7 @@ namespace DuitKu.Middleware
                 };
 
                 _logger.LogError(ex.Message);
+                _logger.LogError(ex.ToJson());
 
                 await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
             }

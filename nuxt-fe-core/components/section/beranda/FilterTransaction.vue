@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { castStringDateIntoDotNetDate, toComboboxCommandListFriendly } from "@/lib/helper";
-import { getAccounts } from "@/services/akun.service";
+import { getAccounts } from "@/services/account.service";
 import { getCategories } from "@/services/category.service";
 import { getSubCategories } from "@/services/sub-category.service";
 import { filterTransactionStore } from '@/store/filter-transaction.store';
@@ -143,8 +143,8 @@ filterTransactionStore().$subscribe((_, state) => {
           :date-start-default="dateStartRef?.split('T')[0]"
           :date-end-default="dateEndRef?.split('T')[0]"
           @date-value-change="(date) => {
-            dateStartRef = date.start ? castStringDateIntoDotNetDate(date.start?.toDate(getLocalTimeZone()).toString()) : undefined;
-            dateEndRef = date.end ? castStringDateIntoDotNetDate(date.end?.toDate(getLocalTimeZone()).toString()) : undefined;
+            dateStartRef = date.start ? castStringDateIntoDotNetDate(date.start?.add({ days: 1 }).toDate(getLocalTimeZone()).toString()) : undefined;
+            dateEndRef = date.end ? castStringDateIntoDotNetDate(date.end?.add({ days: 1 }).toDate(getLocalTimeZone()).toString()) : undefined;
           }"
         />
 

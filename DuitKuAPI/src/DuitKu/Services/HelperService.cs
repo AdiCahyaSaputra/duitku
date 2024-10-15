@@ -9,7 +9,7 @@ namespace DuitKu.Services
             return new BaseResponseFilterDto
             {
                 isPreviousExists = pageNumber > 1,
-                isNextExists = limit != null ? pageNumber * limit < totalRecord : true,
+                isNextExists = limit == null || pageNumber * limit < totalRecord,
             };
         }
     }

@@ -9,7 +9,7 @@ namespace DuitKu.Services
     {
         private readonly ApplicationDBContext _context = context;
         private readonly JwtService _jwtService = jwtService;
-        private readonly PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
+        private readonly PasswordHasher<User> _passwordHasher = new();
 
         public async Task<string> Register(RegisterDto dto)
         {

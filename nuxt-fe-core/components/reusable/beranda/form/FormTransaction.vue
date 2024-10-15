@@ -5,7 +5,7 @@ import {
   castStringDateIntoDotNetDate,
   toComboboxCommandListFriendly,
 } from "@/lib/helper";
-import { getAccounts } from "@/services/akun.service";
+import { getAccounts } from "@/services/account.service";
 import { getCategories } from "@/services/category.service";
 import { getSubCategories } from "@/services/sub-category.service";
 import { createTransaction } from "@/services/transaction.service";
@@ -87,6 +87,16 @@ const { isPending, mutate: createTransactionMutate } = useMutation({
   onSuccess: (res) => {
     queryClient.invalidateQueries({
       queryKey: ["get_transactions"],
+      exact: false,
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: ["get_total_assets"],
+      exact: false,
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: ["get_total_expense"],
       exact: false,
     });
 

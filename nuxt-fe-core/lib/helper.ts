@@ -63,3 +63,13 @@ export const toIDR = (price: number) => {
     currencySign: 'accounting'
   }).format(price);
 }
+
+export const getCurrentDate = () => {
+  const date = new Date();
+
+  return {
+    date: date.getDate(), 
+    month: date.getMonth() + 1, // month itu kayak index array klo di date js mah wkwkwk
+    year: date.getFullYear(), // month itu kayak index array klo di date js mah wkwkwk
+  };
+}
