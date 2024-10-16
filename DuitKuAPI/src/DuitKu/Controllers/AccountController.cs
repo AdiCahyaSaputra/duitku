@@ -45,12 +45,12 @@ namespace DuitKu.Controllers
         public async Task<ActionResult> GetTotalAssetFromAccount(
             [FromQuery] AccountTotalIncomeFilterDto totalIncomeFilterDto)
         {
-            decimal totalAsset = await _accountService.GetTotalAssetFromAccount(GetUserId(), totalIncomeFilterDto);
+            TotalIncomeDto totalIncome = await _accountService.GetTotalAssetFromAccount(GetUserId(), totalIncomeFilterDto);
 
             return Ok(new
             {
                 message = "Total aset kamu",
-                totalAsset
+                totalIncome
             });
         }
 

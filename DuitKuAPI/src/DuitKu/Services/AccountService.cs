@@ -2,8 +2,6 @@ using DuitKu.Persistance.Repository;
 using DuitKu.Domain;
 using DuitKu.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DuitKu.Services
 {
@@ -33,12 +31,13 @@ namespace DuitKu.Services
             return await query.ToListAsync();
         }
 
-        public async Task<decimal> GetTotalAssetFromAccount(Guid userId, AccountTotalIncomeFilterDto totalIncomeFilterDto)
+        public async Task<TotalIncomeDto> GetTotalAssetFromAccount(Guid userId, AccountTotalIncomeFilterDto totalIncomeFilterDto)
         {
             var query = _accountRepository.GetEntities()
                 .AsNoTracking()
                 .Where(account => account.UserId == userId);
 
+            query = _queryService.PaginateWithSearchFilter(query, totalIncomeFilterDto, (query, searchString) => query.Where(account => EF.Functions.Like(account.Name.ToLower(), $"%{searchString.ToLower()}%")));
             query = _queryService.When(query, totalIncomeFilterDto.AccountId.HasValue, (query) => query.Where(account => account.Id == totalIncomeFilterDto.AccountId));
 
             var accounts = await query.ToListAsync();
@@ -47,7 +46,10 @@ namespace DuitKu.Services
 
             accounts.ForEach(account => totalAsset += account.Balance);
 
-            return totalAsset;
+            return new TotalIncomeDto {
+                TotalAsset = totalAsset,
+                Accounts = accounts,
+            };
         }
 
         public async Task<IEnumerable<AccountWithTransactionsDto>> GetAllAccountWithTransactions(Guid userId)
