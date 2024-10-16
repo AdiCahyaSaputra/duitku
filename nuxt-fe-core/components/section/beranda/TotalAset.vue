@@ -1,13 +1,18 @@
 <script setup lang="ts">
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
 import { toIDR } from "@/lib/helper";
 import { getTotalAssets } from "@/services/account.service";
 
 const { data, isLoading } = useQuery({
   queryKey: ["get_total_assets"],
-  queryFn: async () => await getTotalAssets({}),
-  staleTime: 0
+  queryFn: async () => await getTotalAssets({ paginate: false }),
+  staleTime: 0,
 });
-
 </script>
 
 <template>
@@ -23,7 +28,9 @@ const { data, isLoading } = useQuery({
       </div>
       <ReusableStateLoading :is-loading="isLoading">
         <template #content>
-          <h1 class="text-lg font-bold">{{ toIDR(data?.totalAsset || 0) }}</h1>
+          <h1 class="text-lg font-bold">
+            {{ toIDR(data?.totalIncome.totalAsset || 0) }}
+          </h1>
         </template>
         <template #loadingFallback>
           <h1 class="text-lg font-bold gap-2 flex items-center mt-2">
@@ -34,16 +41,24 @@ const { data, isLoading } = useQuery({
       </ReusableStateLoading>
     </div>
 
-    <div>
-      <p class="text-sm flex items-center gap-2">
-        <span class="text-green-600 font-bold">Stonk ni bre</span>
-        <Icon name="lucide:trending-up" class="w-4 h-4" />
-      </p>
+    <div class="flex flex-col gap-4">
+      <Button class="w-full md:w-max flex items-center gap-2 justify-start">
+        <Icon name="lucide:wallet"/>
+        <span>Isi Saldo</span>
+      </Button>
 
-      <p class="text-sm flex items-center gap-2">
-        <span class="text-red-600 font-bold">Wah boros nih</span>
-        <Icon name="lucide:trending-down" class="w-4 h-4" />
-      </p>
+      <div class="flex gap-2 overflow-x-auto no-scrollbar">
+        <Card v-for="(account, idx) in data?.totalIncome.accounts" :key="idx" 
+          class="select-none flex flex-col justify-between shadow-sm">
+          <CardHeader class="px-4 pb-0 pt-0">
+            <CardDescription class="gap-1 flex items-center text-black pt-2">
+              <Icon name="lucide:wallet-minimal"/>
+              <span>{{ account.name }}</span>
+            </CardDescription>
+            <CardContent class="px-0 font-bold text-emerald-600 pb-2">{{ toIDR(account.balance) }}</CardContent>
+          </CardHeader>
+        </Card>
+      </div>
     </div>
   </div>
 </template>

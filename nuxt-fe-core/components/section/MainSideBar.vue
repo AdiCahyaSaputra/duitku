@@ -4,6 +4,10 @@ const props = defineProps<{
   open: boolean;
 }>();
 
+const emit = defineEmits<{
+  (e: 'toggleOpen', open: boolean): void
+}>();
+
 const navbarItems = {
   mainContent: [
     {
@@ -14,12 +18,12 @@ const navbarItems = {
   ],
   dashboardContent: [
     {
-      url: "/akun",
+      url: "/kelola-akun",
       label: "Kelola Akun",
       iconName: "lucide:calculator",
     },
     {
-      url: "/kategori",
+      url: "/kelola-kategori",
       label: "Kelola Kategori",
       iconName: "lucide:book-minus",
     },
@@ -32,6 +36,7 @@ const navbarItems = {
     },
   ],
 };
+
 </script>
 
 <template>
@@ -50,6 +55,7 @@ const navbarItems = {
             :url="item.url"
             :label="item.label"
             :iconName="item.iconName"
+            @nav-item-clicked="() => emit('toggleOpen', props.open)"
           />
         </li>
 
@@ -58,6 +64,7 @@ const navbarItems = {
             :url="item.url"
             :label="item.label"
             :iconName="item.iconName"
+            @nav-item-clicked="() => emit('toggleOpen', props.open)"
           />
         </li>
 
@@ -66,6 +73,7 @@ const navbarItems = {
             :url="item.url"
             :label="item.label"
             :iconName="item.iconName"
+            @nav-item-clicked="() => emit('toggleOpen', props.open)"
           />
         </li>
       </ul>

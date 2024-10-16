@@ -26,7 +26,7 @@ const handleSearch = () => {
 </script>
 
 <template>
-  <div class="h-[2000px] w-full">
+  <div class="min-h-[2000px] w-full">
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-4 w-full border-b">
       <SectionBerandaTotalAset />
       <SectionBerandaTotalPengeluaran />
@@ -58,7 +58,7 @@ const handleSearch = () => {
       </div>
     </div>
 
-    <div class="p-4">
+    <div class="p-4 pb-20">
       <SectionBerandaListTransaction />
     </div>
   </div>

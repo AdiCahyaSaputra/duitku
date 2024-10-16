@@ -76,9 +76,11 @@ const { data: mostExpensiveResponse, isLoading: mostExpensiveFetchLoading } = us
       </div>
       <ReusableStateLoading :is-loading="totalExpenseFetchLoading">
         <template #content>
-          <h1 class="text-lg font-bold mt-2">
-            {{ toIDR(totalExpenseResponse?.totalExpense || 0) }}
-          </h1>
+          <div>
+            <h1 class="text-lg font-bold mt-2">
+              {{ toIDR(totalExpenseResponse?.totalExpense || 0) }}
+            </h1>
+          </div>
         </template>
         <template #loadingFallback>
           <h1 class="text-lg font-bold gap-2 flex items-center mt-2">
@@ -93,10 +95,34 @@ const { data: mostExpensiveResponse, isLoading: mostExpensiveFetchLoading } = us
       <span class="text-black font-bold">Top 3 yang ngabisin duit mu 😁</span>
     </p>
 
-    <ul class="p-4 pt-0 text-sm mt-2">
-      <li v-for="(transaction, idx) in mostExpensiveResponse?.transactions" :key="idx">
-        {{ idx + 1 }}. {{ transaction.description }}
-      </li>
-    </ul>
+    <ReusableStateLoading :is-loading="mostExpensiveFetchLoading">
+      <template #content>
+        <ReusableStateEmpty :is-empty="!mostExpensiveResponse?.transactions">
+          <template #content>
+            <ul class="p-4 pt-0 text-sm mt-2 space-y-2">
+              <li v-for="(transaction, idx) in mostExpensiveResponse?.transactions" :key="idx" class="flex md:flex-row flex-col gap-2 p-2 shadow-sm border rounded-md">
+                <Badge variant="secondary" class="w-max text-nowrap bg-emerald-400/20">{{ transaction.account.name }}</Badge>
+                <div class="flex flex-col md:flex-row md:justify-between w-full gap-2">
+                  <span class="w-max">
+                    {{ transaction.description }} 
+                  </span>
+                  <span class="text-destructive font-bold">
+                    - {{ toIDR(transaction.amount) }}
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </template>
+
+          <template #emptyFallback>
+            <p class="p-4 pt-0 mt-2 text-sm">Belum ada nih, pelit banget kamu</p>
+          </template>
+        </ReusableStateEmpty>
+      </template>
+      <template #loadingFallback>
+        <p class="p-4 pt-0 mt-2 text-sm">Sedang mencari-cari keborosan kamu..</p>
+      </template>
+    </ReusableStateLoading>
+
   </div>
 </template>

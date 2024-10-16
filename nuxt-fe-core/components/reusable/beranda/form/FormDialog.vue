@@ -26,7 +26,7 @@ const isModalOpen = ref(false);
     </DialogTrigger>
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>
+        <DialogTitle class="text-left">
           Buat Transaksi
         </DialogTitle>
         <DialogDescription class="text-left">Catet transaksi disini bre</DialogDescription>
