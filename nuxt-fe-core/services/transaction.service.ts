@@ -24,8 +24,10 @@ type TGetMostExpensiveTransactionResponse = BaseResponseDto & {
   transactions: MostExpensiveTransactionDto[];
 };
 
+const api = useApi();
+
 export const getTransactions = async (
-  param: BaseParamFilterDto & FilterTransactionDto
+  param: BaseParamFilterDto & FilterTransactionDto,
 ): Promise<TGetTransactionFilterResponse | null> => {
   console.log("filter berubah, jalan lagi ", param);
 
@@ -35,19 +37,15 @@ export const getTransactions = async (
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<TGetTransactionFilterResponse>(
-    `/duit-ku/api/transactions?${createQueryStringParams(param)}`,
+  const data = await api<TGetTransactionFilterResponse>(
+    `/transactions?${createQueryStringParams(param)}`,
     {
       method: "get",
       headers: authHeaderAPI(token),
-    }
+    },
   );
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
+  return data;
 };
 
 export const createTransaction = async (formData: CreateTransactionDto) => {
@@ -62,17 +60,13 @@ export const createTransaction = async (formData: CreateTransactionDto) => {
     } as ApiErrorDto;
   }
 
-  const { data, error } = await useFetch("/duit-ku/api/transactions", {
+  const data = await api<BaseResponseDto>("/transactions", {
     headers: authHeaderAPI(token),
     body: JSON.stringify(formData),
     method: "POST",
   });
 
-  if (error.value) {
-    throw error.value.data as ApiErrorDto;
-  }
-
-  return data.value as BaseResponseDto;
+  return data;
 };
 
 export const deleteTransaction = async (id: string) => {
@@ -87,16 +81,12 @@ export const deleteTransaction = async (id: string) => {
     } as ApiErrorDto;
   }
 
-  const { data, error } = await useFetch(`/duit-ku/api/transactions/${id}`, {
+  const data = await api<BaseResponseDto>(`/transactions/${id}`, {
     headers: authHeaderAPI(token),
     method: "DELETE",
   });
 
-  if (error.value) {
-    throw error.value.data as ApiErrorDto;
-  }
-
-  return data.value as BaseResponseDto;
+  return data;
 };
 
 export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
@@ -111,25 +101,21 @@ export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
     } as ApiErrorDto;
   }
 
-  const { data, error } = await useFetch<TGetTotalExpenseResponse>(
-    `/duit-ku/api/transactions/total-expense?${createQueryStringParams(
-      params
+  const data = await api<TGetTotalExpenseResponse>(
+    `/transactions/total-expense?${createQueryStringParams(
+      params,
     )}`,
     {
       method: "get",
       headers: authHeaderAPI(token),
-    }
+    },
   );
 
-  if (error.value) {
-    throw error.value.data as ApiErrorDto;
-  }
-
-  return data.value;
+  return data;
 };
 
 export const getMostExpensiveTransactions = async (
-  params: TotalExpenseFilterDto
+  params: TotalExpenseFilterDto,
 ) => {
   const { getToken } = useUser();
   const token = await getToken();
@@ -142,19 +128,15 @@ export const getMostExpensiveTransactions = async (
     } as ApiErrorDto;
   }
 
-  const { data, error } = await useFetch<TGetMostExpensiveTransactionResponse>(
-    `/duit-ku/api/transactions/top-three-expensive?${createQueryStringParams(
-      params
+  const data = await api<TGetMostExpensiveTransactionResponse>(
+    `/transactions/top-three-expensive?${createQueryStringParams(
+      params,
     )}`,
     {
       method: "get",
       headers: authHeaderAPI(token),
-    }
+    },
   );
 
-  if (error.value) {
-    throw error.value.data as ApiErrorDto;
-  }
-
-  return data.value;
+  return data;
 };

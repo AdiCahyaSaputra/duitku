@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "nuxt": "^3.13.0",
+    "ofetch": "^1.4.1",
     "radix-vue": "^1.9.6",
     "shadcn-nuxt": "^0.10.4",
     "tailwind-merge": "^2.5.3",

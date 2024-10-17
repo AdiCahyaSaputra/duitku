@@ -36,7 +36,7 @@ export const useUser = () => {
   };
 
   const revokeAuthToken = async () => {
-    const { data } = await useFetch("/api/auth/cookie", {
+    const data = await $fetch("/api/auth/cookie", {
       method: "DELETE",
     });
 

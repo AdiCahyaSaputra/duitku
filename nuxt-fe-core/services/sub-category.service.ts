@@ -6,7 +6,9 @@ import { createQueryStringParams } from "@/lib/helper";
 
 type TGetSubCategoryFilterResponse = BaseResponseFilterDto & {
   subCategories: CategoryDto[];
-}
+};
+
+const api = useApi();
 
 export const getSubCategories = async (
   params: BaseParamFilterDto & { categoryId: string },
@@ -16,16 +18,12 @@ export const getSubCategories = async (
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<TGetSubCategoryFilterResponse>(
-    `/duit-ku/api/sub-categories?${createQueryStringParams(params)}`,
+  const data = await api<TGetSubCategoryFilterResponse>(
+    `/sub-categories?${createQueryStringParams(params)}`,
     {
       headers: authHeaderAPI(token),
     },
   );
 
-  if(error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
+  return data;
 };

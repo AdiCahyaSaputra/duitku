@@ -50,7 +50,6 @@ const { setAuthToken } = useUser();
 
 const {
   isPending,
-  isError,
   mutate: loginMutate,
 } = useMutation({
   mutationFn: login,

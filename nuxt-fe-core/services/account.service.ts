@@ -16,6 +16,8 @@ type TGetTotalAssetResponse = BaseResponseDto & {
   totalIncome: TotalIncomeDto;
 };
 
+const api = useApi();
+
 export const getAccounts = async (
   params: BaseParamFilterDto,
 ): Promise<TGetAkunFilterResponse | null> => {
@@ -24,18 +26,14 @@ export const getAccounts = async (
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<TGetAkunFilterResponse>(
-    `/duit-ku/api/accounts?${createQueryStringParams(params)}`,
+  const data = await api<TGetAkunFilterResponse>(
+    `/accounts?${createQueryStringParams(params)}`,
     {
       headers: authHeaderAPI(token),
     },
   );
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
+  return data;
 };
 
 export const getTotalAssets = async (
@@ -46,18 +44,14 @@ export const getTotalAssets = async (
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<TGetTotalAssetResponse>(
-    `/duit-ku/api/accounts/total-asset?${createQueryStringParams(params)}`,
+  const data = await api<TGetTotalAssetResponse>(
+    `/accounts/total-asset?${createQueryStringParams(params)}`,
     {
       headers: authHeaderAPI(token),
     },
   );
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
+  return data;
 };
 
 export const createAccount = async (
@@ -68,44 +62,31 @@ export const createAccount = async (
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<BaseResponseDto>(
-    `/duit-ku/api/accounts`,
-    {
-      method: "post",
-      headers: authHeaderAPI(token),
-      body: JSON.stringify(formData),
-    },
-  );
+  const data = await api<BaseResponseDto>(`/accounts`, {
+    method: "post",
+    headers: authHeaderAPI(token),
+    body: JSON.stringify(formData),
+  });
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
+  return data;
 };
 
 export const editAccount = async (
-  formData: Pick<AccountDto, "name" | "balance">, id: string
+  formData: Pick<AccountDto, "name" | "balance">,
+  id: string,
 ) => {
   const { getToken } = useUser();
   const token = await getToken();
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<BaseResponseDto>(
-    `/duit-ku/api/accounts/${id}`,
-    {
-      method: "put",
-      headers: authHeaderAPI(token),
-      body: JSON.stringify(formData),
-    },
-  );
+  const data = await api<BaseResponseDto>(`/accounts/${id}`, {
+    method: "put",
+    headers: authHeaderAPI(token),
+    body: JSON.stringify(formData),
+  });
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
+  return data;
 };
 
 export const deleteAccount = async (id: string) => {
@@ -114,17 +95,10 @@ export const deleteAccount = async (id: string) => {
 
   if (!token) return null;
 
-  const { data, error } = await useFetch<BaseResponseDto>(
-    `/duit-ku/api/accounts/${id}`,
-    {
-      method: "delete",
-      headers: authHeaderAPI(token),
-    },
-  );
+  const data = await api<BaseResponseDto>(`/accounts/${id}`, {
+    method: "DELETE",
+    headers: authHeaderAPI(token),
+  });
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value;
-}
+  return data;
+};

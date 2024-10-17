@@ -11,8 +11,6 @@ useHead({
 });
 
 const pageNumber = ref(1);
-const isCreateModalOpen = ref(false);
-const isEditModalOpen = ref<string | null>(null);
 
 const { data, isLoading } = useQuery({
   queryKey: ["get_accounts", pageNumber],
@@ -25,21 +23,7 @@ const { data, isLoading } = useQuery({
 <template>
   <div class="w-full">
     <div class="p-4 w-full">
-      <ReusableKelolaAkunFormDialog 
-        title="Buat Akun"
-        description="Buat yang sumber income nggak cuma 1, semoga nggak cepet tipes aja sih 😂"
-        v-model:is-modal-open="isCreateModalOpen"
-      >
-        <template #trigger>
-          <Button class="flex items-center gap-2 w-full md:w-max justify-start">
-            <Icon name="lucide:calculator" />
-            <span>Buat Akun</span>
-          </Button>
-        </template>
-        <template #form>
-          <ReusableKelolaAkunFormCreate @create-mutate-executed="() => isCreateModalOpen = false" />
-        </template>
-      </ReusableKelolaAkunFormDialog>
+      <SectionKelolaAkunCreateAccount />
     </div>
 
     <ul class="w-full">
@@ -52,26 +36,7 @@ const { data, isLoading } = useQuery({
               <p class="font-bold">{{ toIDR(account.balance) }}</p>
             </div>
             <div class="flex gap-2 items-center">
-              <ReusableKelolaAkunFormDialog 
-                title="Buat Akun"
-                description="Buat yang sumber income nggak cuma 1, semoga nggak cepet tipes aja sih 😂"
-                :is-modal-open="isEditModalOpen === account.id"
-                @update:is-modal-open="(value) => isEditModalOpen = value ? account.id : null"
-              >
-                <template #trigger>
-                  <Button size="icon" variant="outline" @click="isEditModalOpen = account.id">
-                    <Icon name="lucide:pen-line" class="w-4 h-4" />
-                  </Button>
-                </template>
-                <template #form>
-                  <ReusableKelolaAkunFormEdit 
-                    :id="account.id"
-                    :name="account.name"
-                    :balance="account.balance"
-                    @edit-mutate-executed="() => isEditModalOpen = null" 
-                  />
-                </template>
-              </ReusableKelolaAkunFormDialog>
+              <SectionKelolaAkunEditAccount :account="account" />
               <ReusableKelolaAkunFormDeleteDialog :id="account.id"/>
             </div>
           </li>

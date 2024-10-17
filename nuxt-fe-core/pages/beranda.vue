@@ -53,7 +53,7 @@ const handleSearch = () => {
         </Button>
       </div>
       <div class="flex items-center gap-2">
-        <ReusableBerandaFormDialog />
+        <SectionBerandaCreateTransaction />
         <SectionBerandaFilterTransaction />
       </div>
     </div>

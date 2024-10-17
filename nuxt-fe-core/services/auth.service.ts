@@ -1,34 +1,29 @@
+import { useApi } from "@/composables/use-api";
 import { authHeaderAPI, defaultHeaderAPI } from "@/constant/api";
 import type LoginUserDto from "@/dto/LoginUserDto";
 import type RegisterUserDto from "@/dto/RegisterUserDto";
 import type UserDto from "@/dto/UserDto";
 
+const api = useApi();
+
 export const registerUser = async (formData: RegisterUserDto) => {
-  const { data, error } = await useFetch("/duit-ku/api/auth/register", {
+  const data = await api("/auth/register", {
     body: JSON.stringify(formData),
     method: "POST",
     headers: defaultHeaderAPI,
   });
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value as { token: string };
+  return data as { token: string };
 };
 
 export const login = async (formData: LoginUserDto) => {
-  const { data, error } = await useFetch("/duit-ku/api/auth/login", {
+  const data = await api("/auth/login", {
     body: JSON.stringify(formData),
     method: "POST",
     headers: defaultHeaderAPI,
   });
 
-  if (error.value) {
-    throw error.value.data;
-  }
-
-  return data.value as { token: string };
+  return data as { token: string };
 };
 
 export const getAuthUser = async (
@@ -37,7 +32,7 @@ export const getAuthUser = async (
   if (!token) return null;
 
   try {
-    const data = await $fetch("/duit-ku/api/auth/user", {
+    const data = await api("/auth/user", {
       method: "POST",
       headers: authHeaderAPI(token),
     });

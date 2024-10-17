@@ -7,14 +7,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const emit = defineEmits(['update:isModalOpen']);
+const emit = defineEmits<{
+  (e: 'update:isModalOpen', value: boolean): void
+}>();
+
 const props = defineProps<{
   title: string;
   description: string;
-  isModalOpen: boolean;
+  isModalOpen?: boolean;
 }>();
 
-const isModalOpenRef = ref(props.isModalOpen);
+const isModalOpenRef = ref(props.isModalOpen || false);
 
 watch(
   () => props.isModalOpen,
@@ -24,7 +27,7 @@ watch(
 );
 
 watch(isModalOpenRef, (newVal) => {
-  emit('update:isModalOpen', newVal); // Buat update v-model nya
+  emit('update:isModalOpen', newVal);
 });
 
 </script>

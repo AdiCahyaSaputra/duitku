@@ -85,20 +85,11 @@ const { isPending, mutate: createTransactionMutate } = useMutation({
   mutationKey: ["create_transaction"],
   mutationFn: createTransaction,
   onSuccess: (res) => {
-    queryClient.invalidateQueries({
-      queryKey: ["get_transactions"],
-      exact: false,
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["get_total_assets"],
-      exact: false,
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["get_total_expense"],
-      exact: false,
-    });
+    queryClient.invalidateQueries({ queryKey: ["get_total_expense"], exact: false });
+    queryClient.invalidateQueries({ queryKey: ["get_most_expense"], exact: false });
+    queryClient.invalidateQueries({ queryKey: ["get_total_assets"], exact: false });
+    queryClient.invalidateQueries({ queryKey: ["get_accounts"], exact: false });
+    queryClient.invalidateQueries({ queryKey: ["get_transactions"], exact: false });
 
     form.resetForm();
 
