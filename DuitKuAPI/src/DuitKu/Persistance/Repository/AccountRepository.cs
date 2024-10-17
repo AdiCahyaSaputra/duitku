@@ -76,7 +76,7 @@ namespace DuitKu.Persistance.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid accountId, Guid userId)
+        public async Task<int> DeleteAsync(Guid accountId, Guid userId)
         {
             var account = await _context.Account
                 .Where(account => account.UserId == userId)
@@ -88,7 +88,11 @@ namespace DuitKu.Persistance.Repository
                 _context.Account.Remove(account);
 
                 await _context.SaveChangesAsync();
+
+                return 1;
             }
+
+            return 0;
         }
     }
 }

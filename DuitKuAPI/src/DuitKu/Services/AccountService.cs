@@ -83,9 +83,9 @@ namespace DuitKu.Services
             return account;
         }
 
-        public async Task DeleteAccount(Guid accountId, Guid userId)
+        public async Task<int> DeleteAccount(Guid accountId, Guid userId)
         {
-            await _accountRepository.DeleteAsync(accountId, userId);
+            return await _accountRepository.DeleteAsync(accountId, userId);
         }
     }
 }

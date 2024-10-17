@@ -118,9 +118,17 @@ namespace DuitKu.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
-            await _accountService.DeleteAccount(accountId, Guid.Parse(userId));
+            int affectedRows = await _accountService.DeleteAccount(accountId, Guid.Parse(userId));
 
-            return Ok(new { Message = "Ok akun nya berhasil di hapus" });
+            if (affectedRows > 0)
+            {
+                return Ok(new { Message = "Ok akun nya berhasil di hapus" });
+            }
+
+            return BadRequest(new ProblemDetails
+            {
+                Title = "Gak bisa hapus akun nya"
+            });
         }
     }
 }
