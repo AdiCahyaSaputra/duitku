@@ -5,8 +5,12 @@ const isModalOpen = ref(false);
 </script>
 
 <template>
-  <ReusableGlobalFormDialog title="Buat Transaksi" description="Catet transaksi disini bre"
-    v-model:is-modal-open="isModalOpen">
+  <ReusableGlobalFormDialog
+    title="Buat Transaksi"
+    description="Catet transaksi disini bre"
+    v-model:is-modal-open="isModalOpen"
+    show-mobile-button
+  >
     <template #trigger>
       <Button class="w-full md:flex hidden items-center justify-between">
         <Icon name="lucide:circle-fading-plus" class="w-4 h-4" />

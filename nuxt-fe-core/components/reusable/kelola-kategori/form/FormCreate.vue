@@ -14,7 +14,7 @@ const emit = defineEmits<{
 const inputItems: { name: string; placeholder: string; type: string }[] = [
   {
     name: "name",
-    placeholder: "Nama Akun",
+    placeholder: "Nama Kategori",
     type: "text",
   },
 ];
@@ -22,8 +22,8 @@ const inputItems: { name: string; placeholder: string; type: string }[] = [
 const formSchema = toTypedSchema(
   z.object({
     name: z.string({
-      message: "Nama Akun harus di isi",
-      required_error: "Nama Akun harus di isi",
+      message: "Nama Kategori harus di isi",
+      required_error: "Nama Kategori harus di isi",
     }),
   }),
 );

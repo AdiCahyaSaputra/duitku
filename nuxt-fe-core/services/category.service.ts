@@ -11,6 +11,10 @@ type TGetCategoryFilterResponse = BaseResponseFilterDto & {
   categories: CategoryDto[];
 };
 
+type TGetSingleCategory = BaseResponseDto & {
+  category: CategoryDto
+}
+
 const api = useApi();
 
 export const getCategories = async (
@@ -30,6 +34,23 @@ export const getCategories = async (
 
   return data;
 };
+
+export const getCategoryById = async (id: string) => {
+  const { getToken } = useUser();
+  const token = await getToken();
+
+  if (!token) return null;
+
+  const data = await api<TGetSingleCategory>(
+    `/categories/${id}`,
+    {
+      headers: authHeaderAPI(token),
+      method: 'get'
+    },
+  );
+
+  return data;
+}
 
 export const createCategory = async (formData: Pick<CategoryDto, "name">) => {
   const { getToken } = useUser();

@@ -2,69 +2,54 @@
 import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import { useToast } from "@/components/ui/toast";
 import type { ApiErrorDto } from "@/dto/BaseResponseDto";
-import type CategoryDto from "@/dto/CategoryDto";
-import { editCategory } from "@/services/category.service";
+import { createSubCategory } from "@/services/sub-category.service";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 
 const emit = defineEmits<{
-  (e: "editMutateExecuted"): void;
-}>();
-
-const props = defineProps<{
-  id: string;
-  name: string;
+  (e: "createMutateExecuted"): void;
 }>();
 
 const inputItems: { name: string; placeholder: string; type: string }[] = [
   {
     name: "name",
-    placeholder: "Nama Kategori",
+    placeholder: "Nama Sub Kategori",
     type: "text",
   },
 ];
 
+const route = useRoute();
+
 const formSchema = toTypedSchema(
   z.object({
     name: z.string({
-      message: "Nama Kategori harus di isi",
-      required_error: "Nama Kategori harus di isi",
+      message: "Nama Sub Kategori harus di isi",
+      required_error: "Nama Sub Kategori harus di isi",
     }),
+    categoryId: z.string()
   }),
 );
 
 const form = useForm({
   validationSchema: formSchema,
   initialValues: {
-    name: props.name,
-  },
+    categoryId: route.params.id as string
+  }
 });
 
 const { toast } = useToast();
-
 const queryClient = useQueryClient();
 
-const { isPending, mutate: editCategoryMutate } = useMutation({
-  mutationKey: ["edit_category", props.id],
-  mutationFn: ({
-    formData,
-    id,
-  }: {
-    formData: Pick<CategoryDto, "name">;
-    id: string;
-  }) => editCategory(formData, id),
+const { isPending, mutate: createSubCategoryMutate } = useMutation({
+  mutationKey: ["create_sub_category"],
+  mutationFn: createSubCategory,
   onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ["get_total_expense"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_most_expense"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_total_assets"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_categories"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_accounts"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_transactions"], exact: false });
+    queryClient.invalidateQueries({ queryKey: ["get_sub_categories"], exact: false });
 
     form.resetForm();
 
-    emit("editMutateExecuted");
+    emit("createMutateExecuted");
 
     toast({
       title: "Bisa nih 👌",
@@ -72,7 +57,7 @@ const { isPending, mutate: editCategoryMutate } = useMutation({
     });
   },
   onError: (err: ApiErrorDto) => {
-    emit("editMutateExecuted");
+    emit("createMutateExecuted");
 
     toast({
       title: "Waduh ada error",
@@ -82,10 +67,7 @@ const { isPending, mutate: editCategoryMutate } = useMutation({
 });
 
 const onSubmit = form.handleSubmit((formData) => {
-  editCategoryMutate({
-    formData,
-    id: props.id,
-  });
+  createSubCategoryMutate(formData);
 });
 </script>
 
@@ -105,7 +87,7 @@ const onSubmit = form.handleSubmit((formData) => {
     <DialogFooter>
       <Button class="mt-4 md:w-max w-full" type="submit" :disabled="isPending">
         <span v-if="isPending">Proses...</span>
-        <span v-else>Edit</span>
+        <span v-else>Buat</span>
       </Button>
     </DialogFooter>
   </form>

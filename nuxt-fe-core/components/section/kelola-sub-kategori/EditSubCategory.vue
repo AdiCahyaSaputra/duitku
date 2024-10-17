@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import FormEdit from "@/components/reusable/kelola-kategori/form/FormEdit.vue";
-import type CategoryDto from "@/dto/CategoryDto";
+import FormEdit from "@/components/reusable/kelola-sub-kategori/form/FormEdit.vue";
+import type SubCategoryDto from "@/dto/SubCategoryDto";
 
 const props = defineProps<{
-  category: CategoryDto;
+  subCategory: SubCategoryDto;
 }>();
 
 const isModalOpen = ref<string | null>(null);
@@ -13,9 +13,9 @@ const isModalOpen = ref<string | null>(null);
   <ReusableGlobalFormDialog
     title="Edit Kategori"
     description="Biar kategori nya lebih eye-catching bisa pake Emote di depan nama nya bre"
-    :is-modal-open="isModalOpen === props.category.id"
+    :is-modal-open="isModalOpen === props.subCategory.id"
     @update:is-modal-open="
-      (value) => (isModalOpen = value ? props.category.id : null)
+      (value) => (isModalOpen = value ? props.subCategory.id : null)
     "
     :show-mobile-button="false"
   >
@@ -23,15 +23,16 @@ const isModalOpen = ref<string | null>(null);
       <Button
         size="icon"
         variant="outline"
-        @click="isModalOpen = props.category.id"
+        @click="isModalOpen = props.subCategory.id"
       >
         <Icon name="lucide:pen-line" class="w-4 h-4" />
       </Button>
     </template>
     <template #form>
       <FormEdit
-        :id="props.category.id"
-        :name="props.category.name"
+        :id="props.subCategory.id"
+        :name="props.subCategory.name"
+        :categoryId="props.subCategory.categoryId"
         @edit-mutate-executed="() => (isModalOpen = null)"
       />
     </template>

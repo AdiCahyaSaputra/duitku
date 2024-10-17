@@ -2,8 +2,8 @@
 import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import { useToast } from "@/components/ui/toast";
 import type { ApiErrorDto } from "@/dto/BaseResponseDto";
-import type CategoryDto from "@/dto/CategoryDto";
-import { editCategory } from "@/services/category.service";
+import type SubCategoryDto from "@/dto/SubCategoryDto";
+import { editSubCategory } from "@/services/sub-category.service";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
@@ -15,12 +15,13 @@ const emit = defineEmits<{
 const props = defineProps<{
   id: string;
   name: string;
+  categoryId: string;
 }>();
 
 const inputItems: { name: string; placeholder: string; type: string }[] = [
   {
     name: "name",
-    placeholder: "Nama Kategori",
+    placeholder: "Nama Akun",
     type: "text",
   },
 ];
@@ -28,9 +29,10 @@ const inputItems: { name: string; placeholder: string; type: string }[] = [
 const formSchema = toTypedSchema(
   z.object({
     name: z.string({
-      message: "Nama Kategori harus di isi",
-      required_error: "Nama Kategori harus di isi",
+      message: "Nama Akun harus di isi",
+      required_error: "Nama Akun harus di isi",
     }),
+    categoryId: z.string(),
   }),
 );
 
@@ -38,6 +40,7 @@ const form = useForm({
   validationSchema: formSchema,
   initialValues: {
     name: props.name,
+    categoryId: props.categoryId,
   },
 });
 
@@ -46,19 +49,19 @@ const { toast } = useToast();
 const queryClient = useQueryClient();
 
 const { isPending, mutate: editCategoryMutate } = useMutation({
-  mutationKey: ["edit_category", props.id],
+  mutationKey: ["edit_sub_category", props.id],
   mutationFn: ({
     formData,
     id,
   }: {
-    formData: Pick<CategoryDto, "name">;
-    id: string;
-  }) => editCategory(formData, id),
+      formData: Pick<SubCategoryDto, "name"> & {categoryId: string};
+      id: string;
+    }) => editSubCategory(formData, id),
   onSuccess: (res) => {
     queryClient.invalidateQueries({ queryKey: ["get_total_expense"], exact: false });
     queryClient.invalidateQueries({ queryKey: ["get_most_expense"], exact: false });
     queryClient.invalidateQueries({ queryKey: ["get_total_assets"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_categories"], exact: false });
+    queryClient.invalidateQueries({ queryKey: ["get_sub_categories"], exact: false });
     queryClient.invalidateQueries({ queryKey: ["get_accounts"], exact: false });
     queryClient.invalidateQueries({ queryKey: ["get_transactions"], exact: false });
 

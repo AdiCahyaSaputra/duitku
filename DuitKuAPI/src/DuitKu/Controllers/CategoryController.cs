@@ -41,7 +41,11 @@ namespace DuitKu.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             var category = await _categoryService.GetById(categoryId, Guid.Parse(userId));
 
-            return Ok(category);
+            return Ok(new
+            {
+                Message = "Detail Kategori",
+                category
+            });
         }
 
         [HttpPost]

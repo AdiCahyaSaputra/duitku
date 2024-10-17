@@ -14,7 +14,9 @@ const emit = defineEmits<{
 const props = defineProps<{
   title: string;
   description: string;
+  showMobileButton: boolean;
   isModalOpen?: boolean;
+  mobileButtonIcon?: string;
 }>();
 
 const isModalOpenRef = ref(props.isModalOpen || false);
@@ -38,8 +40,8 @@ watch(isModalOpenRef, (newVal) => {
       <slot name="trigger" />
     </DialogTrigger>
     <DialogTrigger asChild>
-      <Button size="icon" class="md:hidden">
-        <Icon name="lucide:circle-fading-plus" />
+      <Button size="icon" class="md:hidden" v-show="props.showMobileButton">
+        <Icon :name="props.mobileButtonIcon || 'lucide:circle-fading-plus'" />
       </Button>
     </DialogTrigger>
     <DialogContent>

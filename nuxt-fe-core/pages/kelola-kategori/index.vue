@@ -16,7 +16,7 @@ const {
   isLoading 
 } = useQuery({
   queryKey: ["get_categories", pageNumber],
-  queryFn: () => getCategories({ paginate: true, pageNumber: pageNumber.value, limit: -1 }),
+  queryFn: () => getCategories({ paginate: true, pageNumber: pageNumber.value, limit: 10 }),
   refetchOnMount: 'always'
 });
 </script>
@@ -36,7 +36,12 @@ const {
             :key="idx"
           >
             <div>
-              <p class="text-sm">{{ category.name }}</p>
+              <NuxtLink :to="'/kelola-kategori/' + category.id">
+                <Button class="text-sm gap-4 items-center flex" size="sm" variant="ghost">
+                  <span>{{ category.name }}</span>
+                  <Icon name="lucide:square-arrow-out-up-right" class="order-2"/>
+                </Button>
+              </NuxtLink>
             </div>
             <div class="flex gap-2 items-center">
               <SectionKelolaKategoriEditCategory :category="category" />

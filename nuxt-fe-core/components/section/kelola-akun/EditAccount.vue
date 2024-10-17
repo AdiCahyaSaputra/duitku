@@ -17,6 +17,7 @@ const isModalOpen = ref<string | null>(null);
     @update:is-modal-open="
       (value) => (isModalOpen = value ? props.account.id : null)
     "
+    :show-mobile-button="false"
   >
     <template #trigger>
       <Button
