@@ -10,7 +10,11 @@ useHead({
   title: "Detail Kategori",
 });
 
+const searchFilter = defineModel({ type: String });
+
 const pageNumber = ref(1);
+const searchFilterRef = ref("");
+
 const route = useRoute();
 
 const { data: categoryByIdResponse, isLoading: categoryByIdFetchLoading } =
@@ -22,16 +26,21 @@ const { data: categoryByIdResponse, isLoading: categoryByIdFetchLoading } =
 
 const { data: subCategoriesResponse, isLoading: subCategoriesFetchLoading } =
   useQuery({
-    queryKey: ["get_sub_categories", route.params.id],
+    queryKey: ["get_sub_categories", route.params.id, searchFilterRef],
     queryFn: () =>
       getSubCategories({
         paginate: true,
         pageNumber: pageNumber.value,
         limit: 10,
         categoryId: route.params.id as string,
+        search: searchFilterRef.value
       }),
     refetchOnMount: "always",
   });
+
+const handleSearch = () => {
+  searchFilterRef.value = searchFilter.value || '';
+}
 </script>
 
 <template>
@@ -48,26 +57,51 @@ const { data: subCategoriesResponse, isLoading: subCategoriesFetchLoading } =
       </div>
     </div>
 
-    <div class="p-4 w-full">
+    <div class="p-4 w-full flex gap-2">
+      <div class="flex w-full md:max-w-sm items-center gap-1.5 relative">
+        <Input
+          v-model="searchFilter"
+          type="text"
+          placeholder="Cari"
+          class="w-full bg-white"
+        />
+        <Button
+          @click="handleSearch"
+          type="button"
+          class="absolute right-0 rounded-l-none"
+          size="icon"
+        >
+          <Icon name="lucide:search" />
+        </Button>
+      </div>
       <SectionKelolaSubKategoriCreateSubCategory />
     </div>
 
     <ul class="w-full">
       <ReusableStateLoading :is-loading="subCategoriesFetchLoading">
         <template #content>
-          <li
-            class="flex justify-between items-center py-2 px-4 border-y"
-            v-for="(subCategory, idx) in subCategoriesResponse?.subCategories"
-            :key="idx"
-          >
-            <div>
-              <p class="text-sm">{{ subCategory.name }}</p>
-            </div>
-            <div class="flex gap-2 items-center">
-              <SectionKelolaSubKategoriEditSubCategory :sub-category="subCategory" />
-              <ReusableKelolaSubKategoriFormDeleteDialog :id="subCategory.id" />
-            </div>
-          </li>
+          <ReusableStateEmpty :is-empty="!subCategoriesResponse?.subCategories.length">
+            <template #content>
+              <li
+                class="flex justify-between items-center py-2 px-4 border-y"
+                v-for="(subCategory, idx) in subCategoriesResponse?.subCategories"
+                :key="idx"
+              >
+                <div>
+                  <p class="text-sm">{{ subCategory.name }}</p>
+                </div>
+                <div class="flex gap-2 items-center">
+                  <SectionKelolaSubKategoriEditSubCategory :sub-category="subCategory" />
+                  <ReusableKelolaSubKategoriFormDeleteDialog :id="subCategory.id" />
+                </div>
+              </li>
+            </template>
+            <template #emptyFallback>
+              <li class="flex justify-between items-center py-2 px-4 border-y">
+                <p>Data nya kosong / Gak ketemu</p>
+              </li>
+            </template>
+          </ReusableStateEmpty>
         </template>
 
         <template #loadingFallback>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCategories } from '@/services/category.service';
+import { getCategories } from "@/services/category.service";
 
 definePageMeta({
   layout: "main-default",
@@ -9,45 +9,87 @@ useHead({
   title: "Kelola Kategori",
 });
 
-const pageNumber = ref(1);
+const searchFilter = defineModel({ type: String });
 
-const { 
-  data, 
-  isLoading 
-} = useQuery({
-  queryKey: ["get_categories", pageNumber],
-  queryFn: () => getCategories({ paginate: true, pageNumber: pageNumber.value, limit: 10 }),
-  refetchOnMount: 'always'
+const pageNumber = ref(1);
+const searchFilterRef = ref("");
+
+const { data, isLoading } = useQuery({
+  queryKey: ["get_categories", pageNumber, searchFilterRef],
+  queryFn: () =>
+    getCategories({
+      paginate: true,
+      pageNumber: pageNumber.value,
+      limit: 10,
+      search: searchFilterRef.value,
+    }),
+  refetchOnMount: "always",
 });
+
+const handleSearch = () => {
+  searchFilterRef.value = searchFilter.value || '';
+}
 </script>
 
 <template>
   <div class="w-full">
-    <div class="p-4 w-full">
+    <div class="p-4 w-full flex gap-2">
+      <div class="flex w-full md:max-w-sm items-center gap-1.5 relative">
+        <Input
+          v-model="searchFilter"
+          type="text"
+          placeholder="Cari"
+          class="w-full bg-white"
+        />
+        <Button
+          @click="handleSearch"
+          type="button"
+          class="absolute right-0 rounded-l-none"
+          size="icon"
+        >
+          <Icon name="lucide:search" />
+        </Button>
+      </div>
       <SectionKelolaKategoriCreateCategory />
     </div>
 
     <ul class="w-full">
       <ReusableStateLoading :is-loading="isLoading">
         <template #content>
-          <li
-            class="flex justify-between items-center py-2 px-4 border-y"
-            v-for="(category, idx) in data?.categories"
-            :key="idx"
-          >
-            <div>
-              <NuxtLink :to="'/kelola-kategori/' + category.id">
-                <Button class="text-sm gap-4 items-center flex" size="sm" variant="ghost">
-                  <span>{{ category.name }}</span>
-                  <Icon name="lucide:square-arrow-out-up-right" class="order-2"/>
-                </Button>
-              </NuxtLink>
-            </div>
-            <div class="flex gap-2 items-center">
-              <SectionKelolaKategoriEditCategory :category="category" />
-              <ReusableKelolaKategoriFormDeleteDialog :id="category.id" />
-            </div>
-          </li>
+          <ReusableStateEmpty :is-empty="!data?.categories.length">
+            <template #content>
+              <li
+                class="flex justify-between items-center py-2 px-4 border-y"
+                v-for="(category, idx) in data?.categories"
+                :key="idx"
+              >
+                <div>
+                  <NuxtLink :to="'/kelola-kategori/' + category.id">
+                    <Button
+                      class="text-sm gap-4 items-center flex"
+                      size="sm"
+                      variant="ghost"
+                    >
+                      <span>{{ category.name }}</span>
+                      <Icon
+                        name="lucide:square-arrow-out-up-right"
+                        class="order-2"
+                      />
+                    </Button>
+                  </NuxtLink>
+                </div>
+                <div class="flex gap-2 items-center">
+                  <SectionKelolaKategoriEditCategory :category="category" />
+                  <ReusableKelolaKategoriFormDeleteDialog :id="category.id" />
+                </div>
+              </li>
+            </template>
+            <template #emptyFallback>
+              <li class="flex justify-between items-center py-2 px-4 border-y">
+                <p>Data nya kosong / Gak ketemu</p>
+              </li>
+            </template>
+          </ReusableStateEmpty>
         </template>
 
         <template #loadingFallback>
