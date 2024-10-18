@@ -48,48 +48,53 @@ const form = useForm({
 const { toast } = useToast();
 const queryClient = useQueryClient();
 
-const { 
-  data: accountsResponse, 
-  isLoading: accountsFetchLoading 
-} = useQuery({
+const { data: accountsResponse, isLoading: accountsFetchLoading } = useQuery({
   queryKey: ["get_accounts"],
   queryFn: () => getAccounts({ paginate: false, limit: -1 }),
-  refetchOnMount: 'always'
+  refetchOnMount: "always",
 });
 
-const { 
-  data: categoriesResponse, 
-  isLoading: categoriesFetchLoading 
-} = useQuery({
-  queryKey: ["get_categories"],
-  queryFn: () => getCategories({ paginate: false, limit: -1 }),
-  refetchOnMount: 'always'
-});
+const { data: categoriesResponse, isLoading: categoriesFetchLoading } =
+  useQuery({
+    queryKey: ["get_categories"],
+    queryFn: () => getCategories({ paginate: false, limit: -1 }),
+    refetchOnMount: "always",
+  });
 
-const { 
-  data: subCategoriesResponse, 
-  isLoading: subCategoriesFetchLoading 
-} = useQuery({
-  queryKey: ["get_sub_categories", form.values.categoryId],
-  queryFn: () =>
-    getSubCategories({
-      paginate: false,
-      limit: -1,
-      categoryId: form.values.categoryId || "",
-    }),
-  enabled: computed(() => !!form.values.categoryId),
-  refetchOnMount: 'always'
-});
+const { data: subCategoriesResponse, isLoading: subCategoriesFetchLoading } =
+  useQuery({
+    queryKey: ["get_sub_categories", form.values.categoryId],
+    queryFn: () =>
+      getSubCategories({
+        paginate: false,
+        limit: -1,
+        categoryId: form.values.categoryId || "",
+      }),
+    enabled: computed(() => !!form.values.categoryId),
+    refetchOnMount: "always",
+  });
 
 const { isPending, mutate: createTransactionMutate } = useMutation({
   mutationKey: ["create_transaction"],
   mutationFn: createTransaction,
   onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ["get_total_expense"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_most_expense"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_total_assets"], exact: false });
+    queryClient.invalidateQueries({
+      queryKey: ["get_total_expense"],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["get_most_expense"],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["get_total_assets"],
+      exact: false,
+    });
     queryClient.invalidateQueries({ queryKey: ["get_accounts"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_transactions"], exact: false });
+    queryClient.invalidateQueries({
+      queryKey: ["get_transactions"],
+      exact: false,
+    });
 
     form.resetForm();
 
@@ -112,78 +117,89 @@ const { isPending, mutate: createTransactionMutate } = useMutation({
 
 const onSubmit = form.handleSubmit((formData) => {
   formData.date = castStringDateIntoDotNetDate(formData.date);
-  
+
   createTransactionMutate(formData);
 });
-
 </script>
 <template>
-  <form @submit="onSubmit" class="mt-4">
-    <div class="space-y-2">
-      <ReusableGlobalSelectCombobox
-        :items="
+  <div>
+    <NuxtLink to="/ocr" class="order-2">
+      <Button
+        class="w-full flex items-center justify-start gap-2 bg-emerald-600 text-white focus:bg-emerald-700 hover:bg-emerald-700"
+        type="button"
+        :disabled="isPending"
+      >
+        <Icon name="lucide:camera" />
+        <span>Pake Gambar (Ekperimental)</span>
+      </Button>
+    </NuxtLink>
+
+    <form @submit="onSubmit" class="mt-4">
+      <div class="space-y-2">
+        <ReusableGlobalSelectCombobox
+          :items="
           toComboboxCommandListFriendly(
             accountsResponse?.accounts ?? [],
             'id',
             'name',
           )
-        "
-        name="Sumber Akun"
-        @update-value="
+          "
+          name="Sumber Akun"
+          @update-value="
           (selectedValue) => form.setFieldValue('accountId', selectedValue)
-        "
-        :is-loading="accountsFetchLoading"
-      />
+          "
+          :is-loading="accountsFetchLoading"
+        />
 
-      <ReusableGlobalSelectCombobox
-        :items="
+        <ReusableGlobalSelectCombobox
+          :items="
           toComboboxCommandListFriendly(
             categoriesResponse?.categories ?? [],
             'id',
             'name',
           )
-        "
-        name="Kategori"
-        @update-value="
+          "
+          name="Kategori"
+          @update-value="
           (selectedValue) => form.setFieldValue('categoryId', selectedValue)
-        "
-        :is-loading="categoriesFetchLoading"
-      />
+          "
+          :is-loading="categoriesFetchLoading"
+        />
 
-      <ReusableGlobalSelectCombobox
-        :items="
+        <ReusableGlobalSelectCombobox
+          :items="
           toComboboxCommandListFriendly(
             subCategoriesResponse?.subCategories ?? [],
             'id',
             'name',
           )
-        "
-        name="Sub Kategori"
-        @update-value="
+          "
+          name="Sub Kategori"
+          @update-value="
           (selectedValue) => form.setFieldValue('subCategoryId', selectedValue)
-        "
-        :is-loading="subCategoriesFetchLoading"
-      />
-    </div>
+          "
+          :is-loading="subCategoriesFetchLoading"
+        />
+      </div>
 
-    <div>
-      <FormField v-slot="{ componentField }" name="description">
-        <FormItem class="mt-2">
-          <FormControl>
-            <Input
-              type="text"
-              placeholder="Deskripsi singkat.."
-              v-bind="componentField"
-            />
-          </FormControl>
-          <FormMessage class="mt-2" />
-        </FormItem>
-      </FormField>
+      <div>
+        <FormField v-slot="{ componentField }" name="description">
+          <FormItem class="mt-2">
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Deskripsi singkat.."
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage class="mt-2" />
+          </FormItem>
+        </FormField>
 
-      <!-- Form date Picker -->
-      <FormDatePicker
-        :date="form.values.date"
-        :update-model-value="
+        <!-- Form date Picker -->
+        <FormDatePicker
+          :date="form.values.date"
+          :update-model-value="
           (v) => {
             if (v) {
               form.setFieldValue('date', v.toString());
@@ -191,36 +207,38 @@ const onSubmit = form.handleSubmit((formData) => {
               form.setFieldValue('date', undefined);
             }
           }
-        "
-      />
+          "
+        />
 
-      <FormField v-slot="{ componentField }" name="amount">
-        <FormItem class="mt-2">
-          <FormControl>
-            <div class="w-full flex items-center relative">
-              <div
-                class="absolute w-max inset-y-1 px-2 flex items-center left-1 text-xs bg-primary rounded-md text-white font-bold select-none"
-              >
-                <span> Rp. </span>
+        <FormField v-slot="{ componentField }" name="amount">
+          <FormItem class="mt-2">
+            <FormControl>
+              <div class="w-full flex items-center relative">
+                <div
+                  class="absolute w-max inset-y-1 px-2 flex items-center left-1 text-xs bg-primary rounded-md text-white font-bold select-none"
+                >
+                  <span> Rp. </span>
+                </div>
+                <Input
+                  type="number"
+                  placeholder="Jumlah"
+                  class="pl-12"
+                  v-bind="componentField"
+                />
               </div>
-              <Input
-                type="number"
-                placeholder="Jumlah"
-                class="pl-12"
-                v-bind="componentField"
-              />
-            </div>
-          </FormControl>
-          <FormMessage class="mt-2" />
-        </FormItem>
-      </FormField>
-    </div>
+            </FormControl>
+            <FormMessage class="mt-2" />
+          </FormItem>
+        </FormField>
+      </div>
 
-    <DialogFooter>
-      <Button class="mt-4 md:w-max w-full" type="submit" :disabled="isPending">
-        <span v-if="isPending">Proses...</span>
-        <span v-else>Buat</span>
-      </Button>
-    </DialogFooter>
-  </form>
+      <DialogFooter class="flex flex-row gap-2 mt-4">
+        <Button class="md:w-max w-full order-1" type="submit" :disabled="isPending">
+          <span v-if="isPending">Proses...</span>
+          <span v-else>Buat</span>
+        </Button>
+
+      </DialogFooter>
+    </form>
+  </div>
 </template>

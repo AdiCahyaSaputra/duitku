@@ -29,8 +29,10 @@
     "shadcn-nuxt": "^0.10.4",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
+    "tesseract.js": "^5.1.1",
     "vee-validate": "^4.13.2",
     "vue": "latest",
+    "vue-picture-cropper": "^0.7.0",
     "vue-router": "latest",
     "zod": "^3.23.8"
   },

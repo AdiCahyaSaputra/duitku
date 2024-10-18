@@ -5,8 +5,11 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import FormTopup from "@/components/reusable/beranda/form/FormTopup.vue";
 import { toIDR } from "@/lib/helper";
 import { getTotalAssets } from "@/services/account.service";
+
+const isModalOpen = ref(false);
 
 const { data, isLoading } = useQuery({
   queryKey: ["get_total_assets"],
@@ -42,12 +45,24 @@ const { data, isLoading } = useQuery({
     </div>
 
     <div class="flex flex-col gap-4">
-      <Button class="w-full md:w-max flex items-center gap-2 justify-start">
-        <Icon name="lucide:wallet"/>
-        <span>Isi Saldo</span>
-      </Button>
+      <ReusableGlobalFormDialog
+        title="Isi Saldo"
+        description="Catet pendapatan disini bre"
+        v-model:is-modal-open="isModalOpen"
+        :show-mobile-button="false"
+      >
+        <template #trigger>
+          <Button class="w-full md:w-max flex items-center gap-2 justify-start">
+            <Icon name="lucide:wallet"/>
+            <span>Isi Saldo</span>
+          </Button>
+        </template>
+        <template #form>
+          <FormTopup @create-mutate-executed="() => (isModalOpen = false)"/>
+        </template>
+      </ReusableGlobalFormDialog>
 
-      <div class="flex gap-2 overflow-x-auto no-scrollbar">
+      <div class="flex gap-2 overflow-x-auto no-scrollbar md:with-scrollbar">
         <Card v-for="(account, idx) in data?.totalIncome.accounts" :key="idx" 
           class="select-none flex flex-col justify-between shadow-sm">
           <CardHeader class="px-4 pb-0 pt-0">

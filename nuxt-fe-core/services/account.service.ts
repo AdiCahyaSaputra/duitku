@@ -54,6 +54,24 @@ export const getTotalAssets = async (
   return data;
 };
 
+export const topUpBalance = async (
+  formData: Pick<AccountDto, "id" | "balance">,
+  id: string
+) => {
+  const { getToken } = useUser();
+  const token = await getToken();
+
+  if (!token) return null;
+
+  const data = await api<BaseResponseDto>(`/accounts/top-up/${id}`, {
+    method: "post",
+    headers: authHeaderAPI(token),
+    body: JSON.stringify(formData),
+  });
+
+  return data;
+};
+
 export const createAccount = async (
   formData: Pick<AccountDto, "name" | "balance">,
 ) => {
