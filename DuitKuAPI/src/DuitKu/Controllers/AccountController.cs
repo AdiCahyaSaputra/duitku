@@ -88,6 +88,30 @@ namespace DuitKu.Controllers
             return CreatedAtAction(nameof(Show), new { accountId = account.Id }, new { account, Message = "Ok akun nya udah jadi" });
         }
 
+        [HttpPost("top-up/{accountId:guid}")]
+        public async Task<ActionResult> TopUp(TopUpAccountDto dto, Guid accountId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var account = await _accountService.GetById(accountId, Guid.Parse(userId));
+
+            if (account == null)
+            {
+                return BadRequest("Waduh gak bisa update akun nya");
+            }
+
+            account.Balance = account.Balance + dto.Balance;
+            account.UserId = Guid.Parse(userId);
+
+            await _accountService.UpdateAccount(account);
+
+            return Ok(new { Message = "Ok topup nya berhasil" });
+        }
+
         [HttpPut("{accountId:guid}")]
         public async Task<IActionResult> Update(AccountDto dto, Guid accountId)
         {
