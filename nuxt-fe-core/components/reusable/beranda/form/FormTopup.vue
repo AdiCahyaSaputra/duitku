@@ -1,19 +1,12 @@
 <script setup lang="ts">
 import { useToast } from "@/components/ui/toast";
+import type AccountDto from "@/dto/AccountDto";
 import type { ApiErrorDto } from "@/dto/BaseResponseDto";
-import {
-  castStringDateIntoDotNetDate,
-  toComboboxCommandListFriendly,
-} from "@/lib/helper";
+import { toComboboxCommandListFriendly } from "@/lib/helper";
 import { getAccounts, topUpBalance } from "@/services/account.service";
-import { getCategories } from "@/services/category.service";
-import { getSubCategories } from "@/services/sub-category.service";
-import { createTransaction } from "@/services/transaction.service";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
-import FormDatePicker from "./FormDatePicker.vue";
-import type AccountDto from "@/dto/AccountDto";
 
 const emit = defineEmits(["createMutateExecuted"]);
 
@@ -29,7 +22,7 @@ const formSchema = toTypedSchema(
         invalid_type_error: "Jumlah Saldo nya harus angka",
       })
       .gt(0, "Gak mungkin 0 rupiah bre"),
-  }),
+  })
 );
 
 const form = useForm({
@@ -39,24 +32,36 @@ const form = useForm({
 const { toast } = useToast();
 const queryClient = useQueryClient();
 
-const { 
-  data: accountsResponse, 
-  isLoading: accountsFetchLoading 
-} = useQuery({
+const { data: accountsResponse, isLoading: accountsFetchLoading } = useQuery({
   queryKey: ["get_accounts"],
   queryFn: () => getAccounts({ paginate: false, limit: -1 }),
-  refetchOnMount: 'always'
+  refetchOnMount: "always",
 });
 
 const { isPending, mutate: topUpBalanceMutate } = useMutation({
   mutationKey: ["create_transaction"],
-  mutationFn: (args: { formData: Pick<AccountDto, "id" | "balance">, id: string }) => topUpBalance(args.formData, args.id),
+  mutationFn: (args: {
+    formData: Pick<AccountDto, "id" | "balance">;
+    id: string;
+  }) => topUpBalance(args.formData, args.id),
   onSuccess: (res) => {
-    queryClient.invalidateQueries({ queryKey: ["get_total_expense"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_most_expense"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_total_assets"], exact: false });
+    queryClient.invalidateQueries({
+      queryKey: ["get_total_expense"],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["get_most_expense"],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["get_total_assets"],
+      exact: false,
+    });
     queryClient.invalidateQueries({ queryKey: ["get_accounts"], exact: false });
-    queryClient.invalidateQueries({ queryKey: ["get_transactions"], exact: false });
+    queryClient.invalidateQueries({
+      queryKey: ["get_transactions"],
+      exact: false,
+    });
 
     form.resetForm();
 
@@ -80,10 +85,9 @@ const { isPending, mutate: topUpBalanceMutate } = useMutation({
 const onSubmit = form.handleSubmit((formData) => {
   topUpBalanceMutate({
     formData,
-    id: formData.id
+    id: formData.id,
   });
 });
-
 </script>
 <template>
   <form @submit="onSubmit" class="mt-4">
@@ -93,7 +97,7 @@ const onSubmit = form.handleSubmit((formData) => {
           toComboboxCommandListFriendly(
             accountsResponse?.accounts ?? [],
             'id',
-            'name',
+            'name'
           )
         "
         name="Sumber Akun"

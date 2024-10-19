@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -12,6 +7,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const emit = defineEmits<{
   (e: 'updateValue', selectedValue: string): void
@@ -36,10 +36,6 @@ const handleSelect = (value: string) => {
 
   emit('updateValue', selectedValue.value);
 }
-
-watch(() => selectedValue.value, (newSelectedValue) => {
-  console.log(newSelectedValue);
-})
 
 </script>
 

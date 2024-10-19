@@ -58,22 +58,12 @@ const handleSearch = () => {
     </div>
 
     <div class="p-4 w-full flex gap-2">
-      <div class="flex w-full md:max-w-sm items-center gap-1.5 relative">
-        <Input
-          v-model="searchFilter"
-          type="text"
-          placeholder="Cari"
-          class="w-full bg-white"
-        />
-        <Button
-          @click="handleSearch"
-          type="button"
-          class="absolute right-0 rounded-l-none"
-          size="icon"
-        >
+      <form @submit.prevent="handleSearch" class="flex w-full items-center gap-1.5 relative">
+        <Input v-model="searchFilter" type="text" placeholder="Cari" class="w-full bg-white" />
+        <Button type="submit" class="absolute right-0 rounded-l-none" size="icon">
           <Icon name="lucide:search" />
         </Button>
-      </div>
+      </form>
       <SectionKelolaSubKategoriCreateSubCategory />
     </div>
 
