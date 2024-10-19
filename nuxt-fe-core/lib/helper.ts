@@ -73,3 +73,32 @@ export const getCurrentDate = () => {
     year: date.getFullYear(), // month itu kayak index array klo di date js mah wkwkwk
   };
 }
+
+export const toISOLocaleDateString = (dateInstance: Date) => {
+  const localeDateString = dateInstance.toLocaleDateString('id-ID');
+
+  const [date, month, year] = localeDateString.split('/');
+
+  return `${year}-${month.padStart(2, '0')}-${date.padStart(2, '0')}`;
+}
+
+export const parseOCRText = (ocr: string) => {
+  // (e.g., 30 Sep 2024, 2024-09-30, 30/09/2024)
+  const datePattern = /\b(\d{1,2}[\/\s-]\w+[\/\s-]\d{2,4})\b|\b(\d{4}[\/-]\d{2}[\/-]\d{2})\b/;
+  const totalPricePattern = /Total.*?[\D]*([\d.,]+)/;
+
+  const dateMatch = ocr.match(datePattern);
+  const totalPriceMatch = ocr.match(totalPricePattern);
+
+  const transactionDate = dateMatch ? new Date(dateMatch[0]) : new Date();
+  const totalPrice = totalPriceMatch ? totalPriceMatch[1] : 0;
+
+  return {
+    date: transactionDate,
+    amount: totalPrice,
+    debug: {
+      date: dateMatch,
+      amount: totalPriceMatch,
+    }
+  }
+}

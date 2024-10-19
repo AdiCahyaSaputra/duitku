@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { createWorker } from "tesseract.js";
 import VuePictureCropper, { cropper } from "vue-picture-cropper";
+import { parseOCRText } from '@/lib/helper';
+import FormTransaction from "@/components/reusable/ocr/form/FormTransaction.vue";
 
 definePageMeta({
   layout: "main-default",
@@ -13,6 +15,9 @@ useHead({
 const uploadInput = ref<HTMLInputElement | null>(null)
 const pic = ref("");
 const processOcrLoading = ref(false);
+
+const dateRef = ref<null | Date>(null);
+const amountRef = ref<number>(0);
 
 const selectFile = (e: Event) => {
   pic.value = ''
@@ -44,14 +49,24 @@ const processOcr = async () => {
 
   processOcrLoading.value = false;
 
-  console.log(result.data.text, base64);
+  const { date, amount, debug } = parseOCRText(result.data.text);
+
+  console.log({
+    ocr: result.data.text,
+    date,
+    amount,
+    debug
+  });
+
+  dateRef.value = date;
+  amountRef.value = +((amount as string).replaceAll(".", ""));
 
   await worker.terminate();
 }
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full pb-20">
     <div class="flex gap-2 p-4 items-start border-b w-full">
       <NuxtLink to="/beranda">
         <Button size="icon" variant="outline">
@@ -121,7 +136,10 @@ const processOcr = async () => {
         </div>
       </div>
       <div>
-        <h1>Form nya</h1>
+        <FormTransaction 
+          :date="dateRef ?? new Date()"
+          :amount="amountRef"
+        />
       </div>
     </div>
   </div>
