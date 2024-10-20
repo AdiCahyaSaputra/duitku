@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
+  CommandList
 } from "@/components/ui/command";
 import {
   Popover,
@@ -28,7 +27,20 @@ const props = defineProps<{
 }>();
 
 const open = ref(false);
+const searchTerm = ref("");
 const selectedValue = ref(props.defaultSelectedValue);
+
+const filterData = computed(() => {
+  const data = searchTerm.value === '' 
+  ? props.items 
+  : props.items.filter(item => 
+    item.label.toLowerCase().includes(searchTerm.value.toLocaleLowerCase())
+  );
+
+  console.log(searchTerm.value, data);
+
+  return data;
+});
 
 const handleSelect = (value: string) => {
   open.value = false;
@@ -49,17 +61,18 @@ const handleSelect = (value: string) => {
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-full p-0" align="start">
-      <Command>
+      <Command v-model:searchTerm="searchTerm">
         <CommandInput :placeholder="'Cari ' + props.name" />
-        <CommandEmpty>{{ props.isLoading ? "Lagi di cari.." : props.name + " nggak ketemu 🥲" }}</CommandEmpty>
+        <CommandEmpty>
+          {{ filterData.length < 1 ? (props.isLoading ? "Lagi di cari.." : props.name + " nggak ketemu 🥲") : '' }}
+        </CommandEmpty>
         <CommandList>
           <CommandGroup>
             <CommandItem 
-              v-for="(item, idx) in props.items" 
-              :key="idx" 
-              :value="item.value" 
-              @select="() => handleSelect(item.value)"
-            >
+              v-for="(item, idx) in filterData" 
+              :key="item.value" 
+              :value="item.value"
+              @select="() => handleSelect(item.value)">
               {{ item.label }}
             </CommandItem>
           </CommandGroup>
@@ -67,6 +80,7 @@ const handleSelect = (value: string) => {
             Kosongin
           </Button>
         </CommandList>
+        <pre>{{ filterData }}</pre>
       </Command>
     </PopoverContent>
   </Popover>

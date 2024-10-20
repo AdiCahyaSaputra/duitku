@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import {
   castStringDateIntoDotNetDate,
+  debounceAction,
   toComboboxCommandListFriendly,
   toIDR,
-  transformDotNetTimestamp,
+  transformDotNetTimestamp
 } from "@/lib/helper";
 import { getAccounts } from "@/services/account.service";
 import { getCategories } from "@/services/category.service";
+import { exportToExcel } from "@/services/report.service";
 import { getSubCategories } from "@/services/sub-category.service";
 import { getTransactions } from "@/services/transaction.service";
 import { getLocalTimeZone } from "@internationalized/date";
@@ -19,15 +21,19 @@ useHead({
   title: "Laporan",
 });
 
-const searchFilter = defineModel({ type: String });
+const searchFilter = defineModel('searchFilter', { type: String });
+const limitFilter = defineModel('limitFilter', { type: Number, default: 10 });
 
 const pageNumber = ref(1);
+const limit = ref(10);
 const searchRef = ref<string | undefined>("");
 const categoryIdRef = ref<string | undefined>("");
 const subCategoryIdRef = ref<string | undefined>("");
 const accountIdRef = ref<string | undefined>("");
 const dateStartRef = ref<string | undefined>("");
 const dateEndRef = ref<string | undefined>("");
+
+const isExportLoading = ref(false);
 
 const { data: accountsResponse, isLoading: accountsFetchLoading } = useQuery({
   queryKey: ["get_accounts"],
@@ -62,6 +68,7 @@ const {
   queryKey: [
     "get_transactions",
     pageNumber,
+    limit,
     searchRef,
     categoryIdRef,
     subCategoryIdRef,
@@ -73,7 +80,7 @@ const {
     await getTransactions({
       paginate: true,
       pageNumber: pageNumber.value,
-      limit: 10,
+      limit: limit.value,
       search: searchRef.value,
       categoryId: categoryIdRef.value,
       subCategoryId: subCategoryIdRef.value,
@@ -87,10 +94,34 @@ const {
 const handleSearch = () => {
   searchRef.value = searchFilter.value || "";
 };
+
+const handleDownloadReport = async () => {
+  const data = transactionResponse.value?.transactions;
+
+  if (!!data?.length) {
+    isExportLoading.value = true;
+
+    await exportToExcel(data);
+
+    isExportLoading.value = false;
+  }
+}
+
+const handleToggleAllLimit = () => {
+  const newLimitValue = limit.value < 0 ? 10 : -1;
+
+  limitFilter.value = newLimitValue; 
+}
+
+watch(() => limitFilter.value, (newLimit) => {
+  debounceAction(() => {
+    limit.value = newLimit;
+  }, 500);
+});
 </script>
 
 <template>
-  <div class="w-full pb-20">
+  <div class="w-full pb-20 relative min-h-screen">
     <div class="w-full flex flex-col p-4 gap-2 border-b">
       <form @submit.prevent="handleSearch" class="flex w-full items-center gap-1.5 relative">
         <Input v-model="searchFilter" type="text" placeholder="Cari" class="w-full bg-white" />
@@ -144,7 +175,8 @@ const handleSearch = () => {
           }
             " />
 
-        <Button class="flex items-center justify-start gap-2 bg-emerald-600 hover:bg-emerald-700">
+        <Button @click="handleDownloadReport"
+          class="flex items-center justify-start gap-2 bg-emerald-600 hover:bg-emerald-700" :disabled="isExportLoading">
           <Icon name="lucide:download" />
           <span>Download Laporan</span>
         </Button>
@@ -194,15 +226,28 @@ const handleSearch = () => {
       </Table>
     </div>
 
-    <div class="p-4 space-x-2">
-      <Button variant="outline" size="icon" @click="pageNumber = pageNumber - 1"
-        :disabled="!transactionResponse?.isPreviousExists">
-        <Icon name="lucide:chevron-left" />
-      </Button>
-      <Button variant="outline" size="icon" @click="pageNumber = pageNumber + 1"
-        :disabled="!transactionResponse?.isNextExists">
-        <Icon name="lucide:chevron-right" />
-      </Button>
+    <div class="w-full flex md:flex-row flex-col md:items-center md:justify-between items-start md:fixed md:bottom-20 md:inset-x-0">
+      <div class="p-4 space-x-2">
+        <Button variant="outline" size="icon" @click="pageNumber = pageNumber - 1"
+          :disabled="!transactionResponse?.isPreviousExists">
+          <Icon name="lucide:chevron-left" />
+        </Button>
+        <Button variant="outline" size="icon" @click="pageNumber = pageNumber + 1"
+          :disabled="!transactionResponse?.isNextExists">
+          <Icon name="lucide:chevron-right" />
+        </Button>
+      </div>
+      <div class="flex gap-2 items-center px-4">
+        <Input 
+          class="max-w-24" 
+          type="number" 
+          v-model="limitFilter"
+          :disabled="limit < 0"
+        />
+        <Button :variant="limit < 0 ? 'default' : 'outline'" size="sm" @click="handleToggleAllLimit">
+          Tampilkan Semua: {{ limit < 0 ? '👍' : '👎' }}
+        </Button>
+      </div>
     </div>
   </div>
 </template>
