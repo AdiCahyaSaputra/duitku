@@ -31,13 +31,11 @@ const searchTerm = ref("");
 const selectedValue = ref(props.defaultSelectedValue);
 
 const filterData = computed(() => {
-  const data = searchTerm.value === '' 
-  ? props.items 
-  : props.items.filter(item => 
-    item.label.toLowerCase().includes(searchTerm.value.toLocaleLowerCase())
-  );
-
-  console.log(searchTerm.value, data);
+  const data = searchTerm.value === ''
+    ? props.items
+    : props.items.filter(item =>
+      item.label.toLowerCase().includes(searchTerm.value.toLocaleLowerCase())
+    );
 
   return data;
 });
@@ -63,15 +61,10 @@ const handleSelect = (value: string) => {
     <PopoverContent class="w-full p-0" align="start">
       <Command v-model:searchTerm="searchTerm">
         <CommandInput :placeholder="'Cari ' + props.name" />
-        <CommandEmpty>
-          {{ filterData.length < 1 ? (props.isLoading ? "Lagi di cari.." : props.name + " nggak ketemu 🥲") : '' }}
-        </CommandEmpty>
+        <CommandEmpty>{{ filterData.length < 1 ? (props.isLoading ? "Lagi di cari.." : props.name + " nggak ketemu 🥲") : '' }}</CommandEmpty>
         <CommandList>
           <CommandGroup>
-            <CommandItem 
-              v-for="(item, idx) in filterData" 
-              :key="item.value" 
-              :value="item.value"
+            <CommandItem v-for="(item, idx) in filterData" :key="item.value" :value="item"
               @select="() => handleSelect(item.value)">
               {{ item.label }}
             </CommandItem>

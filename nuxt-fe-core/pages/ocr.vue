@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import FormTransaction from "@/components/reusable/ocr/form/FormTransaction.vue";
+import { parseOCRText } from '@/lib/helper';
 import { createWorker } from "tesseract.js";
 import VuePictureCropper, { cropper } from "vue-picture-cropper";
-import { parseOCRText } from '@/lib/helper';
-import FormTransaction from "@/components/reusable/ocr/form/FormTransaction.vue";
 
 definePageMeta({
   layout: "main-default",
@@ -50,13 +50,6 @@ const processOcr = async () => {
   processOcrLoading.value = false;
 
   const { date, amount, debug } = parseOCRText(result.data.text);
-
-  console.log({
-    ocr: result.data.text,
-    date,
-    amount,
-    debug
-  });
 
   dateRef.value = date;
   amountRef.value = +((amount as string).replaceAll(".", ""));

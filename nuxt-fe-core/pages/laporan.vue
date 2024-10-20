@@ -110,7 +110,7 @@ const handleDownloadReport = async () => {
 const handleToggleAllLimit = () => {
   const newLimitValue = limit.value < 0 ? 10 : -1;
 
-  limitFilter.value = newLimitValue; 
+  limitFilter.value = newLimitValue;
 }
 
 watch(() => limitFilter.value, (newLimit) => {
@@ -226,7 +226,8 @@ watch(() => limitFilter.value, (newLimit) => {
       </Table>
     </div>
 
-    <div class="w-full flex md:flex-row flex-col md:items-center md:justify-between items-start md:fixed md:bottom-20 md:inset-x-0">
+    <div
+      class="w-full flex md:flex-row flex-col md:items-center md:justify-between items-start md:fixed md:bottom-20 md:inset-x-0">
       <div class="p-4 space-x-2">
         <Button variant="outline" size="icon" @click="pageNumber = pageNumber - 1"
           :disabled="!transactionResponse?.isPreviousExists">
@@ -238,15 +239,9 @@ watch(() => limitFilter.value, (newLimit) => {
         </Button>
       </div>
       <div class="flex gap-2 items-center px-4">
-        <Input 
-          class="max-w-24" 
-          type="number" 
-          v-model="limitFilter"
-          :disabled="limit < 0"
-        />
+        <Input class="max-w-24" type="number" v-model="limitFilter" :disabled="limit < 0" />
         <Button :variant="limit < 0 ? 'default' : 'outline'" size="sm" @click="handleToggleAllLimit">
-          Tampilkan Semua: {{ limit < 0 ? '👍' : '👎' }}
-        </Button>
+          Tampilkan Semua: {{ limit < 0 ? '👍' : '👎' }} </Button>
       </div>
     </div>
   </div>

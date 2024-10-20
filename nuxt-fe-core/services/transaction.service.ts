@@ -29,8 +29,6 @@ const api = useApi();
 export const getTransactions = async (
   param: BaseParamFilterDto & FilterTransactionDto,
 ): Promise<TGetTransactionFilterResponse | null> => {
-  console.log("filter berubah, jalan lagi ", param);
-
   const { getToken } = useUser();
 
   const token = await getToken();
