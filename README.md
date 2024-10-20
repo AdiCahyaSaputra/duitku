@@ -47,3 +47,9 @@ Password `postgres`
 Database `duit_ku`
 
 ```
+
+[Postman Collection](https://github.com/user-attachments/files/17449701/duit-ku.postman_collection.json)
+
+# Todo
+- [ ] fix: Bug search items di combobox (kalo pake static data lancar" aja)
+- [ ] feat: Prediksi hasil OCR pake OpenAI GPT buat deskripsi transaksi, tanggal, harga total instead of pake RegEx
