@@ -26,7 +26,7 @@ namespace DuitKu.Services
 
                 var account = new Account
                 {
-                    UserId = user.Id,
+                    User = user,
                     Name = "Bank Los Santos",
                     Balance = 20918221
                 };
@@ -35,25 +35,10 @@ namespace DuitKu.Services
 
                 List<Category> categories =
                 [
-                    new Category {
-                        UserId = user.Id,
-                        Name = "🍜 Konsumsi",
-                    },
-
-                    new Category {
-                        UserId = user.Id,
-                        Name = "🚀 Transport",
-                    },
-
-                    new Category {
-                        UserId = user.Id,
-                        Name = "⚡ Listrik",
-                    },
-
-                    new Category {
-                        UserId = user.Id,
-                        Name = "🤳 Kuota",
-                    },
+                    new Category { User = user, Name = "🍜 Konsumsi" },
+                    new Category { User = user, Name = "🚀 Transport" },
+                    new Category { User = user, Name = "⚡ Listrik" },
+                    new Category { User = user, Name = "🤳 Kuota" },
                 ];
 
                 await _context.Category.AddRangeAsync(categories);
