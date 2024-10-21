@@ -13,7 +13,7 @@ const emit = defineEmits(["updateHeaderHeight"]);
 
 const { user, revokeAuthToken } = useUser();
 
-onMounted(() => {
+onMounted(async () => {
   if (headerElement.value) {
     const height = headerElement.value.offsetHeight;
 

@@ -29,9 +29,7 @@ const api = useApi();
 export const getTransactions = async (
   param: BaseParamFilterDto & FilterTransactionDto,
 ): Promise<TGetTransactionFilterResponse | null> => {
-  const { getToken } = useUser();
-
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -47,8 +45,7 @@ export const getTransactions = async (
 };
 
 export const createTransaction = async (formData: CreateTransactionDto) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) {
     throw {
@@ -68,8 +65,7 @@ export const createTransaction = async (formData: CreateTransactionDto) => {
 };
 
 export const deleteTransaction = async (id: string) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) {
     throw {
@@ -88,8 +84,7 @@ export const deleteTransaction = async (id: string) => {
 };
 
 export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) {
     throw {
@@ -100,9 +95,7 @@ export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
   }
 
   const data = await api<TGetTotalExpenseResponse>(
-    `/transactions/total-expense?${createQueryStringParams(
-      params,
-    )}`,
+    `/transactions/total-expense?${createQueryStringParams(params)}`,
     {
       method: "get",
       headers: authHeaderAPI(token),
@@ -115,8 +108,7 @@ export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
 export const getMostExpensiveTransactions = async (
   params: TotalExpenseFilterDto,
 ) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) {
     throw {
@@ -127,9 +119,7 @@ export const getMostExpensiveTransactions = async (
   }
 
   const data = await api<TGetMostExpensiveTransactionResponse>(
-    `/transactions/top-three-expensive?${createQueryStringParams(
-      params,
-    )}`,
+    `/transactions/top-three-expensive?${createQueryStringParams(params)}`,
     {
       method: "get",
       headers: authHeaderAPI(token),

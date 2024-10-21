@@ -6,9 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const isGuestRoute = ["/login", "/daftar"].includes(to.fullPath);
 
   if (import.meta.client) {
-    const { getToken } = useUser();
-
-    const token = await getToken();
+    const { token } = useUser();
 
     if (!token && !isGuestRoute) {
       return navigateTo("/login");

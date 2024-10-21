@@ -1,4 +1,4 @@
-import { getAuthUser } from "~/services/auth.service";
+import { getAuthUser } from "@/services/auth.service";
 
 export default defineEventHandler(async (event) => {
   const token = getCookie(event, "token");

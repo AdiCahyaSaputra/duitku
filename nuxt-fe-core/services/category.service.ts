@@ -20,8 +20,7 @@ const api = useApi();
 export const getCategories = async (
   params: BaseParamFilterDto,
 ): Promise<TGetCategoryFilterResponse | null> => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -36,8 +35,7 @@ export const getCategories = async (
 };
 
 export const getCategoryById = async (id: string) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -53,8 +51,7 @@ export const getCategoryById = async (id: string) => {
 }
 
 export const createCategory = async (formData: Pick<CategoryDto, "name">) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -68,8 +65,7 @@ export const createCategory = async (formData: Pick<CategoryDto, "name">) => {
 };
 
 export const editCategory = async (formData: Pick<CategoryDto, "name">, id: CategoryDto['id']) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -83,8 +79,7 @@ export const editCategory = async (formData: Pick<CategoryDto, "name">, id: Cate
 };
 
 export const deleteCategory = async (id: CategoryDto["id"]) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 

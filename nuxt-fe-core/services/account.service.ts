@@ -21,8 +21,7 @@ const api = useApi();
 export const getAccounts = async (
   params: BaseParamFilterDto,
 ): Promise<TGetAkunFilterResponse | null> => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -39,8 +38,7 @@ export const getAccounts = async (
 export const getTotalAssets = async (
   params: BaseParamFilterDto & { accountId?: string },
 ) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -58,8 +56,7 @@ export const topUpBalance = async (
   formData: Pick<AccountDto, "id" | "balance">,
   id: string
 ) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -75,8 +72,7 @@ export const topUpBalance = async (
 export const createAccount = async (
   formData: Pick<AccountDto, "name" | "balance">,
 ) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -93,8 +89,7 @@ export const editAccount = async (
   formData: Pick<AccountDto, "name" | "balance">,
   id: string,
 ) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -108,8 +103,7 @@ export const editAccount = async (
 };
 
 export const deleteAccount = async (id: string) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 

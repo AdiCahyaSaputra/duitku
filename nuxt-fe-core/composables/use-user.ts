@@ -1,22 +1,11 @@
-import { getAuthUser } from "@/services/auth.service";
-import { userStore } from "@/store/user.store";
-
 type TSetToken = {
   message: string;
   token: string;
 } | null;
 
 export const useUser = () => {
-  const { user, setUser } = userStore();
-
-  const getToken = async () => {
-    // Kalo pake useFetch sering undefined pas di client nya
-    const data = await $fetch("/api/auth/cookie", {
-      method: "GET",
-    });
-
-    return data;
-  };
+  const { data: user } = useFetch('/api/auth/user');
+  const { data: token } = useFetch('/api/auth/cookie');
 
   const setAuthToken = async (token: string) => {
     const { data } = await useFetch("/api/auth/cookie", {
@@ -27,28 +16,22 @@ export const useUser = () => {
     const createdToken = (data.value as TSetToken)?.token;
 
     if (createdToken) {
-      const user = await getAuthUser(createdToken);
-
-      setUser(user);
-
       navigateTo("/beranda");
     }
   };
 
   const revokeAuthToken = async () => {
-    const data = await $fetch("/api/auth/cookie", {
+    await $fetch("/api/auth/cookie", {
       method: "DELETE",
     });
-
-    setUser(null);
 
     navigateTo("/login");
   };
 
   return {
-    user,
-    getToken,
+    user: user.value,
+    token: token.value,
     setAuthToken,
-    revokeAuthToken,
+    revokeAuthToken
   };
 };

@@ -13,8 +13,7 @@ const api = useApi();
 export const getSubCategories = async (
   params: BaseParamFilterDto & { categoryId: string },
 ): Promise<TGetSubCategoryFilterResponse | null> => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -29,8 +28,7 @@ export const getSubCategories = async (
 };
 
 export const createSubCategory = async (formData: Pick<SubCategoryDto, "name"> & { categoryId: string }) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -44,8 +42,7 @@ export const createSubCategory = async (formData: Pick<SubCategoryDto, "name"> &
 };
 
 export const editSubCategory = async (formData: Pick<SubCategoryDto, "name"> & { categoryId: string }, id: string) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
@@ -59,8 +56,7 @@ export const editSubCategory = async (formData: Pick<SubCategoryDto, "name"> & {
 };
 
 export const deleteSubCategory = async (id: SubCategoryDto["id"]) => {
-  const { getToken } = useUser();
-  const token = await getToken();
+  const { token } = useUser();
 
   if (!token) return null;
 
