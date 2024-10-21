@@ -1,6 +1,7 @@
 using DuitKu.Domain;
 using DuitKu.DTOs;
 using DuitKu.Persistance.Database;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace DuitKu.Services
@@ -13,47 +14,60 @@ namespace DuitKu.Services
 
         public async Task<string> Register(RegisterDto dto)
         {
-            var user = new User { Name = dto.Name, Email = dto.Email };
+            var dbTransaction = await _context.Database.BeginTransactionAsync();
 
-            user.Password = _passwordHasher.HashPassword(user, dto.Password);
+            try
+            {
+                var user = new User { Name = dto.Name, Email = dto.Email };
 
-            await _context.User.AddAsync(user);
+                user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
-            var account = new Account {
-                UserId = user.Id,
-                Name = "Bank Los Santos",
-                Balance = 20918221
-            };
+                await _context.User.AddAsync(user);
 
-            await _context.Account.AddAsync(account);
-
-            List<Category> categories = [
-                new Category {
+                var account = new Account
+                {
                     UserId = user.Id,
-                    Name = "🍜 Konsumsi",
-                },
+                    Name = "Bank Los Santos",
+                    Balance = 20918221
+                };
 
-                new Category {
-                    UserId = user.Id,
-                    Name = "🚀 Transport",
-                },
+                await _context.Account.AddAsync(account);
 
-                new Category {
-                    UserId = user.Id,
-                    Name = "⚡ Listrik",
-                },
+                List<Category> categories =
+                [
+                    new Category {
+                        UserId = user.Id,
+                        Name = "🍜 Konsumsi",
+                    },
 
-                new Category {
-                    UserId = user.Id,
-                    Name = "🤳 Kuota",
-                },
-            ];
+                    new Category {
+                        UserId = user.Id,
+                        Name = "🚀 Transport",
+                    },
 
-            await _context.Category.AddRangeAsync(categories);
+                    new Category {
+                        UserId = user.Id,
+                        Name = "⚡ Listrik",
+                    },
 
-            await _context.SaveChangesAsync();
+                    new Category {
+                        UserId = user.Id,
+                        Name = "🤳 Kuota",
+                    },
+                ];
 
-            return _jwtService.GenerateToken(user.Id, user.Email);
+                await _context.Category.AddRangeAsync(categories);
+
+                await _context.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
+
+                return _jwtService.GenerateToken(user.Id, user.Email);
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
 
         public string? Login(LoginDto dto)
