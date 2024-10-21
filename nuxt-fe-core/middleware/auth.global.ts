@@ -1,13 +1,12 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  if(to.fullPath === '/') return navigateTo('/beranda');
+  if (to.fullPath === "/") return navigateTo("/beranda");
 
   if (import.meta.server) return; // skip middleware on server
 
   const isGuestRoute = ["/login", "/daftar"].includes(to.fullPath);
 
   if (import.meta.client) {
-
-    const { getToken, setAuthUser } = useUser();
+    const { getToken } = useUser();
 
     const token = await getToken();
 
@@ -16,8 +15,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
 
     if (!!token) {
-      setAuthUser(token);
-
       if (isGuestRoute) {
         return navigateTo("/beranda");
       }

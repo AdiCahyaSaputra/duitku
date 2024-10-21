@@ -45,15 +45,8 @@ export const useUser = () => {
     navigateTo("/login");
   };
 
-  const setAuthUser = async (token: string) => {
-    const user = await getAuthUser(token);
-    
-    setUser(user);
-  }
-
   return {
     user,
-    setAuthUser,
     getToken,
     setAuthToken,
     revokeAuthToken,

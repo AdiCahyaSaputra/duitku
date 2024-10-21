@@ -102,3 +102,13 @@ export const parseOCRText = (ocr: string) => {
     }
   }
 }
+
+export const getFromLocalStorage = (key: string): string | null => {
+  if(import.meta.client) {
+    if (typeof window.localStorage !== "undefined") {
+      return localStorage.getItem(key);
+    }
+  }
+
+  return null
+}

@@ -1,15 +1,10 @@
 import type UserDto from "@/dto/UserDto";
+import { getFromLocalStorage } from "@/lib/helper";
 
 export const userStore = defineStore("user", {
   state: (): { user: UserDto | null } => {
-    let user = null;
-
-    if (typeof window.localStorage !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user") ?? '');
-    }
-
     return {
-      user,
+      user: (JSON.parse(getFromLocalStorage('user') ?? '')),
     };
   },
   actions: {

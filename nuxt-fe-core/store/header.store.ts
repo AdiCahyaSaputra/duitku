@@ -1,13 +1,9 @@
+import { getFromLocalStorage } from "@/lib/helper";
+
 export const headerStore = defineStore("header", {
   state: (): { headerHeight: number } => {
-    let headerHeight = 0;
-
-    if (typeof window.localStorage !== "undefined") {
-      headerHeight = +(localStorage.getItem("header-height") ?? '0');
-    }
-
     return {
-      headerHeight,
+      headerHeight: +(getFromLocalStorage('header-height') ?? '0'),
     };
   },
   actions: {
