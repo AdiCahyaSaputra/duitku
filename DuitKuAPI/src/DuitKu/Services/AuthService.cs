@@ -14,9 +14,43 @@ namespace DuitKu.Services
         public async Task<string> Register(RegisterDto dto)
         {
             var user = new User { Name = dto.Name, Email = dto.Email };
+
             user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
             await _context.User.AddAsync(user);
+
+            var account = new Account {
+                UserId = user.Id,
+                Name = "Bank Los Santos",
+                Balance = 20918221
+            };
+
+            await _context.Account.AddAsync(account);
+
+            List<Category> categories = [
+                new Category {
+                    UserId = user.Id,
+                    Name = "🍜 Konsumsi",
+                },
+
+                new Category {
+                    UserId = user.Id,
+                    Name = "🚀 Transport",
+                },
+
+                new Category {
+                    UserId = user.Id,
+                    Name = "⚡ Listrik",
+                },
+
+                new Category {
+                    UserId = user.Id,
+                    Name = "🤳 Kuota",
+                },
+            ];
+
+            await _context.Category.AddRangeAsync(categories);
+
             await _context.SaveChangesAsync();
 
             return _jwtService.GenerateToken(user.Id, user.Email);
