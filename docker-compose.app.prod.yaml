@@ -7,7 +7,7 @@ services:
       context: ./DuitKuAPI/src/DuitKu
       dockerfile: Dockerfile
     ports:
-      - "8080:80" # Baca dulu bre, lapan puluh lapan puluh bukan lapan ribu
+      - "8080:8080" # Baca dulu bre, lapan puluh lapan puluh bukan lapan ribu
     environment:
       DB: ${DB}
       JWT_KEY: ${JWT_KEY}
@@ -21,6 +21,15 @@ services:
     environment:
       DB: ${DB}
       JWT_KEY: ${JWT_KEY}
+    networks:
+      - app-network
+  nginx:
+    container_name: duitku_nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
     networks:
       - app-network
 
