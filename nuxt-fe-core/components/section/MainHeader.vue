@@ -4,8 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -45,24 +43,6 @@ onMounted(() => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel class="text-base">Pengaturan</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <NuxtLink to="/beranda">
-            <DropdownMenuItem class="cursor-pointer">
-              <Icon name="lucide:badge-dollar-sign" class="w-4 h-4 mr-2" />
-              <span class="text-sm text-black/80">Mata Uang</span>
-            </DropdownMenuItem>
-          </NuxtLink>
-
-          <NuxtLink to="/beranda">
-            <DropdownMenuItem class="cursor-pointer">
-              <Icon name="lucide:user" class="w-4 h-4 mr-2" />
-              <span class="text-sm text-black/80">Profil Mu</span>
-            </DropdownMenuItem>
-          </NuxtLink>
-
-          <DropdownMenuSeparator />
-
           <ClientOnly>
             <DropdownMenuItem class="focus:bg-transparent flex flex-col items-start">
               <p class="font-bold">{{ user?.name }}</p>

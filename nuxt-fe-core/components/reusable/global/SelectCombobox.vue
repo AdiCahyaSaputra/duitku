@@ -73,7 +73,6 @@ const handleSelect = (value: string) => {
             Kosongin
           </Button>
         </CommandList>
-        <pre>{{ filterData }}</pre>
       </Command>
     </PopoverContent>
   </Popover>
