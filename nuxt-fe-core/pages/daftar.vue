@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
-import { useForm } from "vee-validate";
-import { useMutation } from "@tanstack/vue-query";
-import { registerUser } from "@/services/auth.service";
-import type RegisterUserDto from "@/dto/RegisterUserDto";
 import { useToast } from "@/components/ui/toast/use-toast";
+import type RegisterUserDto from "@/dto/RegisterUserDto";
+import { registerUser } from "@/services/auth.service";
+import { useMutation } from "@tanstack/vue-query";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import * as z from "zod";
 
 definePageMeta({
   layout: "default",
@@ -65,7 +65,7 @@ const {
   onSuccess: (res) => {
     toast({
       title: "Notifikasi",
-      description: "Teleport ke menu utama...",
+      description: "Ok udah berhasil daftar nih",
     });
 
     setAuthToken(res.token);
