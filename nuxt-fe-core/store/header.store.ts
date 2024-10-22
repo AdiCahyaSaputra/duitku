@@ -6,9 +6,9 @@ export const headerStore = defineStore("header", {
   },
   actions: {
     setHeaderHeight(headerHeight: number) {
-      // if (typeof window.localStorage !== "undefined") {
-      //   localStorage.setItem("header-height", headerHeight.toString());
-      // }
+      if (typeof window.localStorage !== "undefined") {
+        localStorage.setItem("header-height", headerHeight.toString());
+      }
 
       this.headerHeight = headerHeight;
     },

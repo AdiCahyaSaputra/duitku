@@ -3,18 +3,18 @@ import type BaseParamFilterDto from "@/dto/BaseParamFilterDto";
 import type { BaseResponseDto, BaseResponseFilterDto } from "@/dto/BaseResponseDto";
 import type SubCategoryDto from "@/dto/SubCategoryDto";
 import { createQueryStringParams } from "@/lib/helper";
+import { getAuthToken } from "./auth.service";
 
 type TGetSubCategoryFilterResponse = BaseResponseFilterDto & {
   subCategories: SubCategoryDto[];
 };
 
 const api = useApi();
+const token = await getAuthToken();
 
 export const getSubCategories = async (
   params: BaseParamFilterDto & { categoryId: string },
 ): Promise<TGetSubCategoryFilterResponse | null> => {
-  const { token } = useUser();
-
   if (!token) return null;
 
   const data = await api<TGetSubCategoryFilterResponse>(
@@ -28,8 +28,6 @@ export const getSubCategories = async (
 };
 
 export const createSubCategory = async (formData: Pick<SubCategoryDto, "name"> & { categoryId: string }) => {
-  const { token } = useUser();
-
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/sub-categories`, {
@@ -42,8 +40,6 @@ export const createSubCategory = async (formData: Pick<SubCategoryDto, "name"> &
 };
 
 export const editSubCategory = async (formData: Pick<SubCategoryDto, "name"> & { categoryId: string }, id: string) => {
-  const { token } = useUser();
-
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/sub-categories/${id}`, {
@@ -56,8 +52,6 @@ export const editSubCategory = async (formData: Pick<SubCategoryDto, "name"> & {
 };
 
 export const deleteSubCategory = async (id: SubCategoryDto["id"]) => {
-  const { token } = useUser();
-
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/sub-categories/${id}`, {

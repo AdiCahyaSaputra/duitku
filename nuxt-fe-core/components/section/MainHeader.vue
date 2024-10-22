@@ -20,6 +20,7 @@ onMounted(async () => {
     emit("updateHeaderHeight", height);
   }
 });
+
 </script>
 
 <template>
@@ -30,20 +31,18 @@ onMounted(async () => {
           Duit<span class="text-emerald-500">Ku</span>
         </h1>
       </NuxtLink>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon">
-            <Avatar class="bg-transparent">
-              <ClientOnly>
+      <ClientOnly>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Avatar class="bg-transparent">
                 <AvatarFallback class="bg-transparent font-bold">{{
                   user?.name[0].toUpperCase()
-                }}</AvatarFallback>
-              </ClientOnly>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <ClientOnly>
+                  }}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
             <DropdownMenuItem class="focus:bg-transparent flex flex-col items-start">
               <p class="font-bold">{{ user?.name }}</p>
               <p class="text-xs">{{ user?.email }}</p>
@@ -53,9 +52,9 @@ onMounted(async () => {
               <span class="text-sm font-bold text-white">Keluar</span>
               <Icon name="lucide:log-out" class="w-4 h-4" />
             </Button>
-          </ClientOnly>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </ClientOnly>
     </div>
   </nav>
 </template>

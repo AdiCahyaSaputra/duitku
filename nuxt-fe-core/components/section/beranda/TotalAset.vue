@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import FormTopup from "@/components/reusable/beranda/form/FormTopup.vue";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
-import FormTopup from "@/components/reusable/beranda/form/FormTopup.vue";
 import { toIDR } from "@/lib/helper";
 import { getTotalAssets } from "@/services/account.service";
 
@@ -15,6 +15,7 @@ const { data, isLoading } = useQuery({
   queryKey: ["get_total_assets"],
   queryFn: async () => await getTotalAssets({ paginate: false }),
   staleTime: 0,
+  refetchOnMount: 'always'
 });
 </script>
 

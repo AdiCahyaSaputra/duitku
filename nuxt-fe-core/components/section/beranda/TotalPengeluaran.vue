@@ -33,6 +33,7 @@ const { data: totalExpenseResponse, isLoading: totalExpenseFetchLoading } =
         dateStart: castStringDateIntoDotNetDate(dateStart.value.toString()),
         dateEnd: castStringDateIntoDotNetDate(dateEnd.value.toString()),
       }),
+    refetchOnMount: 'always',
   });
 
 const { data: mostExpensiveResponse, isLoading: mostExpensiveFetchLoading } = useQuery({
@@ -42,6 +43,7 @@ const { data: mostExpensiveResponse, isLoading: mostExpensiveFetchLoading } = us
       dateStart: castStringDateIntoDotNetDate(dateStart.value.toString()),
       dateEnd: castStringDateIntoDotNetDate(dateEnd.value.toString()),
     }),
+  refetchOnMount: 'always'
 });
 </script>
 

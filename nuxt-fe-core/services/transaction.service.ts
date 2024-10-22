@@ -11,6 +11,7 @@ import type MostExpensiveTransactionDto from "@/dto/MostExpensiveTransactionDto"
 import type TotalExpenseFilterDto from "@/dto/TotalExpenseFilterDto";
 import type TransactionWithRelationDto from "@/dto/TransactionWithRelationDto";
 import { createQueryStringParams } from "@/lib/helper";
+import { getAuthToken } from "./auth.service";
 
 type TGetTransactionFilterResponse = BaseResponseFilterDto & {
   transactions: TransactionWithRelationDto[];
@@ -25,12 +26,11 @@ type TGetMostExpensiveTransactionResponse = BaseResponseDto & {
 };
 
 const api = useApi();
+const token = await getAuthToken();
 
 export const getTransactions = async (
   param: BaseParamFilterDto & FilterTransactionDto,
 ): Promise<TGetTransactionFilterResponse | null> => {
-  const { token } = useUser();
-
   if (!token) return null;
 
   const data = await api<TGetTransactionFilterResponse>(
@@ -45,8 +45,6 @@ export const getTransactions = async (
 };
 
 export const createTransaction = async (formData: CreateTransactionDto) => {
-  const { token } = useUser();
-
   if (!token) {
     throw {
       title: "Login dulu bre..",
@@ -65,8 +63,6 @@ export const createTransaction = async (formData: CreateTransactionDto) => {
 };
 
 export const deleteTransaction = async (id: string) => {
-  const { token } = useUser();
-
   if (!token) {
     throw {
       title: "Login dulu bre..",
@@ -84,8 +80,6 @@ export const deleteTransaction = async (id: string) => {
 };
 
 export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
-  const { token } = useUser();
-
   if (!token) {
     throw {
       title: "Login dulu bre..",
@@ -108,8 +102,6 @@ export const getTotalExpense = async (params: TotalExpenseFilterDto) => {
 export const getMostExpensiveTransactions = async (
   params: TotalExpenseFilterDto,
 ) => {
-  const { token } = useUser();
-
   if (!token) {
     throw {
       title: "Login dulu bre..",

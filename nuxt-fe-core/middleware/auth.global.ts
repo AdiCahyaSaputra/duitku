@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const isGuestRoute = ["/login", "/daftar"].includes(to.fullPath);
 
   if (import.meta.client) {
-    const { token } = useUser();
+    const token = await $fetch("/api/auth/cookie");
 
     if (!token && !isGuestRoute) {
       return navigateTo("/login");

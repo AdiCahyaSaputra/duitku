@@ -1,11 +1,21 @@
+import type UserDto from "@/dto/UserDto";
+import { userStore } from "@/store/user.store";
+
 type TSetToken = {
   message: string;
   token: string;
 } | null;
 
 export const useUser = () => {
-  const { data: user } = useFetch('/api/auth/user');
-  const { data: token } = useFetch('/api/auth/cookie');
+  const user = ref<UserDto | null>(null);
+
+  const userStoreInstance = userStore();
+
+  const getToken = async () => {
+    const token = await $fetch('/api/auth/cookie');
+
+    return token || null;
+  }
 
   const setAuthToken = async (token: string) => {
     const { data } = await useFetch("/api/auth/cookie", {
@@ -16,6 +26,8 @@ export const useUser = () => {
     const createdToken = (data.value as TSetToken)?.token;
 
     if (createdToken) {
+      userStoreInstance.setUser();
+
       navigateTo("/beranda");
     }
   };
@@ -25,13 +37,23 @@ export const useUser = () => {
       method: "DELETE",
     });
 
+    userStoreInstance.revokeUser();
+
     navigateTo("/login");
   };
 
+  onMounted(() => {
+    userStoreInstance.getUser();
+  });
+
+  userStoreInstance.$subscribe((_, state) => {
+    user.value = state.user;
+  });
+
   return {
-    user: user.value,
-    token: token.value,
+    user,
+    getToken,
     setAuthToken,
-    revokeAuthToken
+    revokeAuthToken,
   };
 };

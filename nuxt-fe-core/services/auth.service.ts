@@ -42,3 +42,9 @@ export const getAuthUser = async (
     return null;
   }
 };
+
+export const getAuthToken = async () => {
+  const token = await $fetch("/api/auth/cookie");
+
+  return token || null;
+}
