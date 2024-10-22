@@ -227,7 +227,7 @@ watch(() => limitFilter.value, (newLimit) => {
     </div>
 
     <div
-      class="w-full flex md:flex-row flex-col md:items-center md:justify-between items-start md:fixed md:bottom-20 md:inset-x-0">
+      class="w-full flex md:flex-row flex-col md:items-center md:justify-between items-start">
       <div class="p-4 space-x-2">
         <Button variant="outline" size="icon" @click="pageNumber = pageNumber - 1"
           :disabled="!transactionResponse?.isPreviousExists">
