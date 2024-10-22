@@ -10,11 +10,12 @@ type TGetSubCategoryFilterResponse = BaseResponseFilterDto & {
 };
 
 const api = useApi();
-const token = await getAuthToken();
 
 export const getSubCategories = async (
   params: BaseParamFilterDto & { categoryId: string },
 ): Promise<TGetSubCategoryFilterResponse | null> => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<TGetSubCategoryFilterResponse>(
@@ -28,6 +29,8 @@ export const getSubCategories = async (
 };
 
 export const createSubCategory = async (formData: Pick<SubCategoryDto, "name"> & { categoryId: string }) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/sub-categories`, {
@@ -40,6 +43,8 @@ export const createSubCategory = async (formData: Pick<SubCategoryDto, "name"> &
 };
 
 export const editSubCategory = async (formData: Pick<SubCategoryDto, "name"> & { categoryId: string }, id: string) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/sub-categories/${id}`, {
@@ -52,6 +57,8 @@ export const editSubCategory = async (formData: Pick<SubCategoryDto, "name"> & {
 };
 
 export const deleteSubCategory = async (id: SubCategoryDto["id"]) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/sub-categories/${id}`, {

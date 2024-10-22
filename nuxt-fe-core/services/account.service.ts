@@ -18,11 +18,12 @@ type TGetTotalAssetResponse = BaseResponseDto & {
 };
 
 const api = useApi();
-const token = await getAuthToken();
 
 export const getAccounts = async (
   params: BaseParamFilterDto,
 ): Promise<TGetAkunFilterResponse | null> => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<TGetAkunFilterResponse>(
@@ -38,6 +39,8 @@ export const getAccounts = async (
 export const getTotalAssets = async (
   params: BaseParamFilterDto & { accountId?: string },
 ) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<TGetTotalAssetResponse>(
@@ -54,6 +57,8 @@ export const topUpBalance = async (
   formData: Pick<AccountDto, "id" | "balance">,
   id: string
 ) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/accounts/top-up/${id}`, {
@@ -68,6 +73,8 @@ export const topUpBalance = async (
 export const createAccount = async (
   formData: Pick<AccountDto, "name" | "balance">,
 ) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/accounts`, {
@@ -83,6 +90,8 @@ export const editAccount = async (
   formData: Pick<AccountDto, "name" | "balance">,
   id: string,
 ) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/accounts/${id}`, {
@@ -95,6 +104,8 @@ export const editAccount = async (
 };
 
 export const deleteAccount = async (id: string) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/accounts/${id}`, {

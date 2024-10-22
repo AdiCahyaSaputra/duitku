@@ -17,11 +17,12 @@ type TGetSingleCategory = BaseResponseDto & {
 }
 
 const api = useApi();
-const token = await getAuthToken();
 
 export const getCategories = async (
   params: BaseParamFilterDto,
 ): Promise<TGetCategoryFilterResponse | null> => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<TGetCategoryFilterResponse>(
@@ -35,6 +36,8 @@ export const getCategories = async (
 };
 
 export const getCategoryById = async (id: string) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<TGetSingleCategory>(
@@ -49,6 +52,8 @@ export const getCategoryById = async (id: string) => {
 }
 
 export const createCategory = async (formData: Pick<CategoryDto, "name">) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/categories`, {
@@ -61,6 +66,8 @@ export const createCategory = async (formData: Pick<CategoryDto, "name">) => {
 };
 
 export const editCategory = async (formData: Pick<CategoryDto, "name">, id: CategoryDto['id']) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/categories/${id}`, {
@@ -73,6 +80,8 @@ export const editCategory = async (formData: Pick<CategoryDto, "name">, id: Cate
 };
 
 export const deleteCategory = async (id: CategoryDto["id"]) => {
+  const token = await getAuthToken();
+
   if (!token) return null;
 
   const data = await api<BaseResponseDto>(`/categories/${id}`, {
