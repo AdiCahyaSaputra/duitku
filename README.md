@@ -49,6 +49,7 @@ Database `duit_ku`
 ```
 
 [Postman Collection](https://github.com/user-attachments/files/17449701/duit-ku.postman_collection.json)
+[Preview Demo Video](https://www.linkedin.com/posts/adi-cs_setelah-3-minggu-belajar-nuxtjs-vue-dan-activity-7254413256344182784-PaCY?utm_source=share&utm_medium=member_desktop)
 
 # Todo
 - [x] fix: Bug search items di combobox (kalo pake static data lancar" aja)
